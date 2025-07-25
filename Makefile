@@ -1,0 +1,4 @@
+lint:
+	@rubocop -a
+
+.PHONY:

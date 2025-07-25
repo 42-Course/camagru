@@ -1,5 +1,5 @@
-require_relative './app'
+require_relative "./app"
 
-map '/' do
+map "/" do
   run CamagruApp
 end

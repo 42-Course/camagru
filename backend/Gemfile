@@ -1,11 +1,16 @@
-source 'https://rubygems.org'
+source "https://rubygems.org"
 
-gem 'puma'
-gem 'sinatra'
+gem "puma"
+gem "rackup"
+gem "sinatra"
 
-gem 'rubocop', require: false
+gem "rubocop", require: false
 
 group :test do
-  gem 'rack-test'
-  gem 'rspec'
+  gem "rack-test"
+  gem "rspec"
+end
+
+group :development do
+  gem "sinatra-contrib"
 end

@@ -16,6 +16,7 @@ GEM
     parser (3.3.9.0)
       ast (~> 2.4.1)
       racc
+    pg (1.5.9)
     prism (1.4.0)
     puma (6.6.0)
       nio4r (~> 2.0)
@@ -88,6 +89,7 @@ PLATFORMS
   x86_64-linux
 
 DEPENDENCIES
+  pg
   puma
   rack-test
   rackup

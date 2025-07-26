@@ -3,6 +3,13 @@ require "pg"
 require "uri"
 require "fileutils"
 
+def database_targets
+  [
+    {env_var: "DATABASE_URL", label: "development"},
+    {env_var: "TEST_DATABASE_URL", label: "test"}
+  ]
+end
+
 desc "Export all API docs"
 task "doc:export" do
   require_relative "./app/lib/api_doc"
@@ -29,54 +36,64 @@ end
 
 # rubocop:disable Metrics/BlockLength
 namespace :db do
-  desc "Create the database"
+  desc "Create both development and test databases"
   task :create do
-    uri = URI.parse(ENV["DATABASE_URL"])
-    dbname = uri.path[1..]
-    conn = PG.connect(dbname: "postgres", user: uri.user, password: uri.password, host: uri.host)
-    begin
-      conn.exec("CREATE DATABASE #{dbname}")
-      puts "✅ Database '#{dbname}' created"
-    rescue PG::DuplicateDatabase
-      puts "⚠️  Database already exists: #{dbname}"
-    ensure
-      conn.close
+    database_targets.each do |target|
+      uri = URI.parse(ENV[target[:env_var]] || abort("Missing #{target[:env_var]}"))
+      dbname = uri.path[1..]
+      puts "📦 Creating #{target[:label]} database: #{dbname}"
+
+      PG.connect(dbname: "postgres", user: uri.user, password: uri.password, host: uri.host) do |conn|
+        conn.exec("CREATE DATABASE #{dbname}")
+        puts "✅ Created: #{dbname}"
+      rescue PG::DuplicateDatabase
+        puts "⚠️  Already exists: #{dbname}"
+      end
     end
   end
 
-  desc "Run all migrations"
+  desc "Run migrations on both databases"
   task :migrate do
-    Dir.glob("db/migrate/*.rb").sort.each do |file|
-      puts "🔧 Running #{file}"
-      require_relative "./#{file}"
+    database_targets.each do |target|
+      puts "🔄 Migrating #{target[:label]} database"
+      ENV["DATABASE_URL"] = ENV[target[:env_var]] # temporarily override
+
+      Dir.glob("db/migrate/*.rb").sort.each do |file|
+        puts "  ↪ Running #{file}"
+        load "./#{file}" # use `load` so the file is re-evaluated each time
+      end
     end
   end
 
-  desc "Drop the database"
+  desc "Drop both development and test databases"
   task :drop do
-    uri = URI.parse(ENV["DATABASE_URL"])
-    dbname = uri.path[1..]
+    database_targets.each do |target|
+      uri = URI.parse(ENV[target[:env_var]] || abort("Missing #{target[:env_var]}"))
+      dbname = uri.path[1..]
+      puts "🗑️  Dropping #{target[:label]} database: #{dbname}"
 
-    # Connect to a different DB like `postgres`
-    conn = PG.connect(
-      dbname: "postgres",
-      host: uri.host,
-      user: uri.user,
-      password: uri.password
-    )
+      conn = PG.connect(
+        dbname: "postgres",
+        host: uri.host,
+        user: uri.user,
+        password: uri.password
+      )
 
-    begin
-      # Terminate all connections to the DB we're dropping
-      conn.exec <<~SQL
-        REVOKE CONNECT ON DATABASE #{dbname} FROM public;
-        SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname = '#{dbname}';
-      SQL
+      begin
+        # Terminate connections first
+        conn.exec <<~SQL
+          REVOKE CONNECT ON DATABASE #{dbname} FROM public;
+          SELECT pg_terminate_backend(pid)
+          FROM pg_stat_activity
+          WHERE datname = '#{dbname}' AND pid <> pg_backend_pid();
+        SQL
 
-      # Drop it
-      conn.exec("DROP DATABASE IF EXISTS #{dbname}")
-      puts "🗑️  Dropped database: #{dbname}"
-    ensure
-      conn.close
+        # DROP must be outside transaction
+        conn.exec("DROP DATABASE IF EXISTS #{dbname}")
+        puts "✅ Dropped: #{dbname}"
+      ensure
+        conn.close
+      end
     end
   end
 

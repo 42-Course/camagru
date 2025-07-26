@@ -1,6 +1,7 @@
 require "sinatra"
 require "sinatra/reloader" if development?
 require_relative "./app/lib/cors"
+require_relative "./app/lib/db"
 
 # CamagruApp is the main Sinatra application class that handles
 # all HTTP routes and configuration for the Camagru backend.
@@ -20,8 +21,15 @@ class CamagruApp < Sinatra::Base
   get "/" do
     {message: "Welcome to CamagruApp"}.to_json
   end
+
+  # use SomeController
 end
 
 at_exit do
-  puts "Shutting down DB connections..."
+  Database.pool.shutdown do |conn|
+    conn.close
+    puts "Shutting down DB connections..."
+  rescue StandardError
+    nil
+  end
 end

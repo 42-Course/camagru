@@ -67,11 +67,38 @@ console:
 		${DOCKER_CONTAINER_NAME} \
 		irb -r ./app
 
-re: down build re_db
+re: down build re_db lint
 
 re_db: drop create migrate
 
 lint:
-	@rubocop -a
+	-@rubocop -a
+
+help:
+	@echo
+	@echo "🚀 Camagru Makefile Commands"
+	@echo "────────────────────────────────────────────"
+	@echo " up            🟢 Start all containers"
+	@echo " build         🔨 Build and start containers"
+	@echo " down          🔻 Stop and remove containers"
+	@echo " logs          📜 Tail container logs"
+	@echo " run           🐚 Bash shell into backend container"
+	@echo " console       🧪 Launch IRB with app preloaded"
+	@echo " docs          📘 Generate API docs (markdown + JSON)"
+	@echo
+	@echo " DB Commands"
+	@echo "────────────────────────────────────────────"
+	@echo " create        🏗️  Create both dev and test databases"
+	@echo " migrate       🧬 Run all migrations (on both DBs)"
+	@echo " drop          💣 Drop both dev and test databases"
+	@echo " seed          🌱 Seed the database (calls create + migrate first)"
+	@echo " re_db         🔁 Drop + Create + Migrate database"
+	@echo
+	@echo " Dev Tools"
+	@echo "────────────────────────────────────────────"
+	@echo " lint          🎯 Run RuboCop with auto-correct"
+	@echo " test          ✅ Run RSpec tests (e.g. make test spec/foo_spec.rb)"
+	@echo " re            ♻️  Full reset (down, build, re_db, lint)"
+	@echo
 
 .PHONY: docs test migrate

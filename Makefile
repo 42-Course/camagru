@@ -58,7 +58,6 @@ drop:
 test:
 	-${DOCKER_EXEC} compose run \
 		-it \
-		--remove-orphans \
 		${DOCKER_CONTAINER_NAME} \
 		bundle exec rspec $(filter-out $@,$(MAKECMDGOALS))
 

@@ -7,7 +7,7 @@ RSpec.describe User do
     {
       username: "testuser",
       email: "test@example.com",
-      password_hash: "hashedpw123"
+      password: "hashedpw123"
     }
   end
 
@@ -17,10 +17,10 @@ RSpec.describe User do
 
       expect(user).to include(
         "username" => user_data[:username],
-        "email" => user_data[:email],
-        "password_hash" => user_data[:password_hash]
+        "email" => user_data[:email]
       )
       expect(user["id"]).not_to be_nil
+      expect(user["password_hash"]).not_to be_nil
     end
   end
 

@@ -1,6 +1,7 @@
 require "sinatra/base"
 require_relative "../helpers/request_helper"
 require_relative "../helpers/session_token"
+require_relative "../lib/api_doc"
 require_relative "../lib/errors"
 require_relative "../models/user"
 

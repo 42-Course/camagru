@@ -1,6 +1,8 @@
 ENV["RACK_ENV"] ||= "test"
 
 require "rspec"
+require "pry"
+require "pry-byebug"
 require "rack/test"
 require_relative "../app"
 require_relative "support/db_helpers"
@@ -14,6 +16,7 @@ RSpec.configure do |config|
   end
 
   config.before(:each) do
+    header "Host", "localhost"
     DBHelpers.clean_db!
   end
 

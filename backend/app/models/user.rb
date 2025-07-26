@@ -11,7 +11,8 @@ class User < BaseModel
     result.ntuples.positive? ? result[0] : nil
   end
 
-  def self.create(username:, email:, password_hash:)
+  def self.create(username:, email:, password:)
+    password_hash = PasswordHasher.hash_password(password)
     result = query(<<~SQL, [username, email, password_hash])
       INSERT INTO #{table_name} (username, email, password_hash, notifications_enabled, created_at, updated_at)
       VALUES ($1, $2, $3, TRUE, NOW(), NOW())

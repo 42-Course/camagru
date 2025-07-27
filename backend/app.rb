@@ -7,6 +7,7 @@ require_relative "./app/controllers/users_controller"
 require_relative "./app/controllers/password_resets_controller"
 require_relative "./app/controllers/stickers_controller"
 require_relative "./app/controllers/images_controller"
+require_relative "./app/controllers/gallery_controller"
 
 # CamagruApp is the main Sinatra application class that handles
 # all HTTP routes and configuration for the Camagru backend.
@@ -32,6 +33,7 @@ class CamagruApp < Sinatra::Base
   use PasswordResetsController
   use StickersController
   use ImagesController
+  use GalleryController
 end
 
 at_exit do

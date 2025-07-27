@@ -27,13 +27,13 @@
 | POST |     /password/reset           | → PasswordResetsController#update | OK |
 | GET |      /confirm?token=...        | → UsersController#confirm_email | OK |
 | GET |      /stickers                 | → StickersController#index | OK |
-| GET |      /gallery?page=1           | → GalleryController#index | TODO |
-<!-- | POST |     /images                   | → ImagesController#create | Server side image creation | -->
-| DELETE |   /images/:id               | → ImagesController#destroy | TODO |
-| POST |     /images/:id/archive       | → ImagesController#archive | TODO |
-| GET |      /images/mine              | → ImagesController#my_images | TODO |
-| GET |      /images/archived          | → ImagesController#archived | TODO |
+| GET |      /gallery?page=1           | → GalleryController#index | OK (Missing ordering by comments, likes) |
+| DELETE |   /images/:id               | → ImagesController#destroy | OK |
+| POST |     /images/:id/archive       | → ImagesController#archive | OK |
+| GET |      /images/mine              | → ImagesController#my_images | OK |
+| GET |      /images/archived          | → ImagesController#archived | OK |
 | POST |     /images/:id/like          | → LikesController#like | TODO |
 | DELETE |   /images/:id/unlike        | → LikesController#unlike | TODO |
 | POST |     /images/:id/comments      | → CommentsController#create | TODO |
 | GET |      /images/:id/comments      | → CommentsController#index | TODO |
+<!-- | POST |     /images                   | → ImagesController#create | Server side image creation | -->

@@ -67,5 +67,48 @@ RSpec.describe Image do
       expect(deleted).to be_nil
     end
   end
+
+  describe ".gallery_total and .gallery_page" do
+    before do
+      # Create 6 visible images
+      6.times do |i|
+        Image.create(user_id: user["id"], file_path: "/images/g#{i}.png")
+      end
+      # Add 2 archived images (should be excluded)
+      archived = Image.create(user_id: user["id"], file_path: "/images/archived1.png")
+      Image.soft_delete(archived["id"])
+      archived = Image.create(user_id: user["id"], file_path: "/images/archived2.png")
+      Image.soft_delete(archived["id"])
+    end
+
+    it "returns correct visible total" do
+      total = Image.gallery_total
+      expect(total).to eq(6)
+    end
+
+    it "paginates correctly (per_page = 2, page = 2)" do
+      page = Image.gallery_page(page: 2, per_page: 2)
+      expect(page.size).to eq(2)
+      expect(page[0]["file_path"]).to match(%r{/images/g})
+    end
+
+    it "returns images in correct order (default: created_at DESC)" do
+      page = Image.gallery_page(page: 1, per_page: 3)
+      timestamps = page.map { _1["created_at"] }
+      expect(timestamps).to eq(timestamps.sort.reverse)
+    end
+
+    it "respects custom sort order (ASC)" do
+      asc_page = Image.gallery_page(page: 1, per_page: 3, order: "asc")
+      timestamps = asc_page.map { _1["created_at"] }
+      expect(timestamps).to eq(timestamps.sort)
+    end
+
+    it "ignores archived images" do
+      images = Image.gallery_page(page: 1, per_page: 10)
+      file_paths = images.map { _1["file_path"] }
+      expect(file_paths).not_to include("/images/archived1.png", "/images/archived2.png")
+    end
+  end
 end
 # rubocop:enable Metrics/BlockLength

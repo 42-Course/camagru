@@ -1,6 +1,29 @@
 require_relative "./base_model"
 
 class Image < BaseModel
+  DEFAULT_SORT_BY   = "created_at".freeze
+  DEFAULT_ORDER     = "DESC".freeze
+  ALLOWED_SORTS     = %w[created_at].freeze
+  ALLOWED_ORDERS    = %w[asc desc].freeze
+
+  def self.gallery_total
+    query("SELECT COUNT(*) FROM #{table_name} WHERE deleted_at IS NULL").first["count"].to_i
+  end
+
+  def self.gallery_page(page:, per_page:, sort_by: nil, order: nil)
+    sort_column = ALLOWED_SORTS.include?(sort_by) ? sort_by : DEFAULT_SORT_BY
+    sort_order  = ALLOWED_ORDERS.include?(order&.downcase) ? order.upcase : DEFAULT_ORDER
+
+    offset = (page - 1) * per_page
+
+    query(<<~SQL, [per_page, offset]).to_a
+      SELECT * FROM #{table_name}
+      WHERE deleted_at IS NULL
+      ORDER BY #{sort_column} #{sort_order}
+      LIMIT $1 OFFSET $2
+    SQL
+  end
+
   def self.create(user_id:, file_path:)
     result = query(<<~SQL, [user_id, file_path])
       INSERT INTO #{table_name} (user_id, file_path, created_at)

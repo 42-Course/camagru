@@ -292,6 +292,62 @@
   },
   {
     "method": "GET",
+    "path": "/gallery",
+    "description": "List all public images in the gallery with support for pagination, sorting, and custom per-page limits.",
+    "auth_required": false,
+    "tags": [
+      "gallery",
+      "images"
+    ],
+    "params": [
+      {
+        "name": "page",
+        "type": "Integer",
+        "required": false,
+        "desc": "Page number (default: 1)"
+      },
+      {
+        "name": "per_page",
+        "type": "Integer",
+        "required": false,
+        "desc": "Items per page (default: 10, max: 100)"
+      },
+      {
+        "name": "sort_by",
+        "type": "String",
+        "required": false,
+        "desc": "Field to sort by (only `created_at` supported for now)"
+      },
+      {
+        "name": "order",
+        "type": "String",
+        "required": false,
+        "desc": "`asc` or `desc` (default: desc)"
+      }
+    ],
+    "responses": [
+      {
+        "code": 200,
+        "desc": "Paginated images",
+        "example": {
+          "page": 1,
+          "per_page": 5,
+          "total": 32,
+          "total_pages": 7,
+          "images": [
+            {
+              "id": 3,
+              "file_path": "/images/abc.png",
+              "user_id": 1,
+              "created_at": "..."
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "method": "GET",
     "path": "/images/mine",
     "description": "Retrieve the current user's active (non-archived) images.",
     "auth_required": true,

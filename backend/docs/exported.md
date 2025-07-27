@@ -200,6 +200,37 @@
 ```
 
 ---
+## `GET` /gallery
+**Description**: List all public images in the gallery with support for pagination, sorting, and custom per-page limits.
+**Auth required**: No
+**Tags**: gallery, images
+
+### Parameters
+- `page` (Integer)  - Page number (default: 1)
+- `per_page` (Integer)  - Items per page (default: 10, max: 100)
+- `sort_by` (String)  - Field to sort by (only `created_at` supported for now)
+- `order` (String)  - `asc` or `desc` (default: desc)
+
+### Responses
+- `200`: Paginated images
+```json
+{
+  "page": 1,
+  "per_page": 5,
+  "total": 32,
+  "total_pages": 7,
+  "images": [
+    {
+      "id": 3,
+      "file_path": "/images/abc.png",
+      "user_id": 1,
+      "created_at": "..."
+    }
+  ]
+}
+```
+
+---
 ## `GET` /images/mine
 **Description**: Retrieve the current user's active (non-archived) images.
 **Auth required**: Yes

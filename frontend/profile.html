@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>My Profile – Camagru</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" />
+  <style>
+    .profile-header img {
+      width: 100px;
+      height: 100px;
+      object-fit: cover;
+      border-radius: 50%;
+    }
+
+    .tab-btn.active {
+      font-weight: bold;
+      text-decoration: underline;
+    }
+
+    .image-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 1rem;
+    }
+
+    #image-modal {
+      cursor: zoom-out;
+    }
+
+    #image-modal .modal-content {
+      cursor: default;
+      background: white;
+      border-radius: 8px;
+      overflow: hidden;
+      max-width: 700px;
+      width: 90%;
+      max-height: 95vh;
+      position: relative;
+      padding: 0;
+    }
+
+    #image-modal img {
+      width: 100%;
+      display: block;
+      position: relative;
+    }
+
+    #image-modal .nav-arrow {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(0, 0, 0, 0.5);
+      color: white;
+      border: none;
+      font-size: 1.5rem;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      cursor: pointer;
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s;
+    }
+
+    #image-modal .nav-arrow:hover {
+      background: rgba(0, 0, 0, 0.8);
+    }
+
+    #image-modal .nav-arrow.left {
+      left: 16px;
+    }
+
+    #image-modal .nav-arrow.right {
+      right: 16px;
+    }
+    
+    .comment-section {
+      max-height: 200px;
+      overflow-y: auto;
+    }
+
+  </style>
+</head>
+<body class="container py-5">
+
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h3 class="profile-header" id="username">User</h3>
+    <button id="logout-btn" class="btn btn-outline-danger">Logout</button>
+  </div>
+
+  <div class="mb-4 d-flex gap-3">
+    <button id="published-tab" class="btn btn-link p-0 tab-btn active">Published</button>
+    <button id="archived-tab" class="btn btn-link p-0 tab-btn">Archived</button>
+  </div>
+
+  <div id="image-container" class="image-grid"></div>
+  <div id="status" class="text-danger mt-3"></div>
+
+  <!-- Modal container (required once) -->
+  <div id="image-modal" class="position-fixed top-0 start-0 w-100 h-100 d-flex justify-content-center align-items-center bg-dark bg-opacity-75 d-none" style="z-index: 1050;">
+    <div class="modal-content bg-white rounded shadow" style="max-width: 600px; width: 90%; max-height: 90vh; overflow-y: auto;"></div>
+  </div>
+
+  <script type="module">
+    import { getCurrentUser, logout, isLoggedIn } from './js/auth.js';
+    import { apiFetch } from './js/api.js';
+    import { createImageCard } from './js/components/imageCard.js';
+
+    const logoutBtn = document.getElementById('logout-btn');
+    const usernameEl = document.getElementById('username');
+    const imageContainer = document.getElementById('image-container');
+    const statusEl = document.getElementById('status');
+    const publishedTab = document.getElementById('published-tab');
+    const archivedTab = document.getElementById('archived-tab');
+
+    if (!isLoggedIn()) {
+      window.location.href = '/login.html';
+    }
+
+    logoutBtn.onclick = logout;
+
+    const currentUser = getCurrentUser();
+    usernameEl.textContent = currentUser.username || currentUser.identity;
+
+    let currentView = 'published';
+
+    async function loadImages() {
+      imageContainer.innerHTML = '';
+      statusEl.textContent = '';
+
+      const endpoint = currentView === 'archived' ? '/images/archived' : '/images/mine';
+
+      try {
+        const res = await apiFetch(endpoint);
+        const images = await res.json();
+        if (!res.ok) throw new Error(images.error || 'Failed to load images');
+
+        if (images.length === 0) {
+          imageContainer.innerHTML = '<p class="text-muted">No images to show.</p>';
+          return;
+        }
+
+        for (const image of images) {
+          const el = createImageCard(image, images);
+          imageContainer.appendChild(el);
+        }
+      } catch (err) {
+        statusEl.textContent = err.message;
+      }
+    }
+
+    publishedTab.onclick = () => {
+      currentView = 'published';
+      publishedTab.classList.add('active');
+      archivedTab.classList.remove('active');
+      loadImages();
+    };
+
+    archivedTab.onclick = () => {
+      currentView = 'archived';
+      archivedTab.classList.add('active');
+      publishedTab.classList.remove('active');
+      loadImages();
+    };
+
+    loadImages();
+  </script>
+</body>
+</html>

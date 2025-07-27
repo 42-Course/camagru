@@ -6,7 +6,6 @@ class Image < BaseModel
   DEFAULT_SORT_BY   = "created_at".freeze
   DEFAULT_ORDER     = "DESC".freeze
   ALLOWED_SORTS     = %w[created_at likes comments].freeze
-  # ALLOWED_SORTS     = %w[created_at].freeze
   ALLOWED_ORDERS    = %w[asc desc].freeze
 
   def self.gallery_total

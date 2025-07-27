@@ -67,6 +67,122 @@
     ]
   },
   {
+    "method": "GET",
+    "path": "/stickers",
+    "description": "Get the list of available sticker overlays. Public route used by the editor.",
+    "auth_required": false,
+    "tags": [
+      "stickers"
+    ],
+    "params": [],
+    "responses": [
+      {
+        "code": 200,
+        "desc": "List of stickers",
+        "example": [
+          {
+            "id": 1,
+            "name": "Hat",
+            "file_path": "/stickers/hat.png"
+          },
+          {
+            "id": 2,
+            "name": "Laser Eyes",
+            "file_path": "/stickers/lasereyes.png"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "method": "POST",
+    "path": "/password/forgot",
+    "description": "Request a password reset link.If the email exists, a reset token is sent.The response is always generic to prevent user enumeration.",
+    "auth_required": false,
+    "tags": [
+      "password",
+      "reset"
+    ],
+    "params": [
+      {
+        "name": "email",
+        "type": "String",
+        "required": true,
+        "desc": "The email address of the user requesting a password reset."
+      }
+    ],
+    "responses": [
+      {
+        "code": 200,
+        "desc": "Reset link sent (if account exists)",
+        "example": {
+          "message": "If your email exists, a reset link has been sent"
+        }
+      },
+      {
+        "code": 400,
+        "desc": "Missing email",
+        "example": {
+          "error": "Missing email"
+        }
+      }
+    ]
+  },
+  {
+    "method": "POST",
+    "path": "/password/reset",
+    "description": "Request a password reset link. If the email exists, a reset token is sent.The response is always generic to prevent user enumeration.",
+    "auth_required": false,
+    "tags": [
+      "password",
+      "reset"
+    ],
+    "params": [
+      {
+        "name": "token",
+        "type": "String",
+        "required": true,
+        "desc": "Reset token received by email"
+      },
+      {
+        "name": "password",
+        "type": "String",
+        "required": true,
+        "desc": "New password (minimum 8 characters)"
+      }
+    ],
+    "responses": [
+      {
+        "code": 200,
+        "desc": "Password reset successfully",
+        "example": {
+          "message": "Password reset successfully"
+        }
+      },
+      {
+        "code": 400,
+        "desc": "Missing token or password",
+        "example": {
+          "error": "Missing token or password"
+        }
+      },
+      {
+        "code": 400,
+        "desc": "Password too short",
+        "example": {
+          "error": "Password too short (min 8 chars)"
+        }
+      },
+      {
+        "code": 400,
+        "desc": "Invalid or expired token",
+        "example": {
+          "error": "Invalid or expired token"
+        }
+      }
+    ]
+  },
+  {
     "method": "POST",
     "path": "/signup",
     "description": "Register a new user. Sends a confirmation email with a validation token.",

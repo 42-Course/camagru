@@ -26,7 +26,7 @@
 | POST |     /password/forgot          | → PasswordResetsController#create | OK |
 | POST |     /password/reset           | → PasswordResetsController#update | OK |
 | GET |      /confirm?token=...        | → UsersController#confirm_email | OK |
-| GET |      /stickers                 | → StickersController#index | TODO |
+| GET |      /stickers                 | → StickersController#index | OK |
 | GET |      /gallery?page=1           | → GalleryController#index | TODO |
 | POST |     /images                   | → ImagesController#create | TODO |
 | DELETE |   /images/:id               | → ImagesController#destroy | TODO |

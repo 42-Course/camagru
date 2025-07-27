@@ -46,6 +46,88 @@
 ```
 
 ---
+## `GET` /stickers
+**Description**: Get the list of available sticker overlays. Public route used by the editor.
+**Auth required**: No
+**Tags**: stickers
+
+### Responses
+- `200`: List of stickers
+```json
+[
+  {
+    "id": 1,
+    "name": "Hat",
+    "file_path": "/stickers/hat.png"
+  },
+  {
+    "id": 2,
+    "name": "Laser Eyes",
+    "file_path": "/stickers/lasereyes.png"
+  }
+]
+```
+
+---
+## `POST` /password/forgot
+**Description**: Request a password reset link.If the email exists, a reset token is sent.The response is always generic to prevent user enumeration.
+**Auth required**: No
+**Tags**: password, reset
+
+### Parameters
+- `email` (String) **(required)** - The email address of the user requesting a password reset.
+
+### Responses
+- `200`: Reset link sent (if account exists)
+```json
+{
+  "message": "If your email exists, a reset link has been sent"
+}
+```
+- `400`: Missing email
+```json
+{
+  "error": "Missing email"
+}
+```
+
+---
+## `POST` /password/reset
+**Description**: Request a password reset link. If the email exists, a reset token is sent.The response is always generic to prevent user enumeration.
+**Auth required**: No
+**Tags**: password, reset
+
+### Parameters
+- `token` (String) **(required)** - Reset token received by email
+- `password` (String) **(required)** - New password (minimum 8 characters)
+
+### Responses
+- `200`: Password reset successfully
+```json
+{
+  "message": "Password reset successfully"
+}
+```
+- `400`: Missing token or password
+```json
+{
+  "error": "Missing token or password"
+}
+```
+- `400`: Password too short
+```json
+{
+  "error": "Password too short (min 8 chars)"
+}
+```
+- `400`: Invalid or expired token
+```json
+{
+  "error": "Invalid or expired token"
+}
+```
+
+---
 ## `POST` /signup
 **Description**: Register a new user. Sends a confirmation email with a validation token.
 **Auth required**: No

@@ -7,89 +7,109 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" />
   <link rel="stylesheet" href="styles/main.css" />
 </head>
-<body class="container py-5">
+<body>
+  <div id="app-navbar"></div>
+  <main id="app-container" class="container py-4"></main>
+  <div id="app-footer"></div>
 
-  <div class="d-flex justify-content-between align-items-center mb-4">
-    <h3 class="profile-header" id="username">User</h3>
-    <button id="logout-btn" class="btn btn-outline-danger">Logout</button>
-  </div>
-
-  <div class="mb-4 d-flex gap-3">
-    <button id="published-tab" class="btn btn-link p-0 tab-btn active">Published</button>
-    <button id="archived-tab" class="btn btn-link p-0 tab-btn">Archived</button>
-  </div>
-
-  <div id="image-container" class="image-grid"></div>
-  <div id="status" class="text-danger mt-3"></div>
-
-  <!-- Modal container (required once) -->
+  <!-- Shared image modal -->
   <div id="image-modal" class="position-fixed top-0 start-0 w-100 h-100 d-flex justify-content-center align-items-center bg-dark bg-opacity-75 d-none" style="z-index: 1050;">
     <div class="modal-content bg-white rounded shadow" style="max-width: 600px; width: 90%; max-height: 90vh; overflow-y: auto;"></div>
   </div>
 
+  <div id="loading-cover"></div>
+
   <script type="module">
+    import { initLayout } from './js/layout.js';
     import { getCurrentUser, logout, isLoggedIn } from './js/auth.js';
     import { apiFetch } from './js/api.js';
     import { createImageCard } from './js/components/imageCard.js';
-
-    const logoutBtn = document.getElementById('logout-btn');
-    const usernameEl = document.getElementById('username');
-    const imageContainer = document.getElementById('image-container');
-    const statusEl = document.getElementById('status');
-    const publishedTab = document.getElementById('published-tab');
-    const archivedTab = document.getElementById('archived-tab');
 
     if (!isLoggedIn()) {
       window.location.href = '/login.html';
     }
 
-    logoutBtn.onclick = logout;
+    initLayout(async () => {
+      const main = document.getElementById('app-container');
 
-    const currentUser = getCurrentUser();
-    usernameEl.textContent = currentUser.username || currentUser.identity;
+      const header = document.createElement('div');
+      header.className = 'd-flex justify-content-between align-items-center mb-4';
 
-    let currentView = 'published';
+      const username = document.createElement('h3');
+      username.className = 'profile-header';
+      const currentUser = getCurrentUser();
+      username.textContent = currentUser.username || currentUser.identity;
 
-    async function loadImages() {
-      imageContainer.innerHTML = '';
-      statusEl.textContent = '';
+      header.append(username);
 
-      const endpoint = currentView === 'archived' ? '/images/archived' : '/images/mine';
+      const tabs = document.createElement('div');
+      tabs.className = 'mb-4 d-flex gap-3';
 
-      try {
-        const res = await apiFetch(endpoint);
-        const images = await res.json();
-        if (!res.ok) throw new Error(images.error || 'Failed to load images');
+      const publishedTab = document.createElement('button');
+      publishedTab.id = 'published-tab';
+      publishedTab.className = 'btn btn-link p-0 tab-btn active';
+      publishedTab.textContent = 'Published';
 
-        if (images.length === 0) {
-          imageContainer.innerHTML = '<p class="text-muted">No images to show.</p>';
-          return;
+      const archivedTab = document.createElement('button');
+      archivedTab.id = 'archived-tab';
+      archivedTab.className = 'btn btn-link p-0 tab-btn';
+      archivedTab.textContent = 'Archived';
+
+      tabs.append(publishedTab, archivedTab);
+
+      const imageContainer = document.createElement('div');
+      imageContainer.id = 'image-container';
+      imageContainer.className = 'image-grid';
+
+      const status = document.createElement('div');
+      status.id = 'status';
+      status.className = 'text-danger mt-3';
+
+      main.append(header, tabs, imageContainer, status);
+
+      let currentView = 'published';
+
+      async function loadImages() {
+        imageContainer.innerHTML = '';
+        status.textContent = '';
+
+        const endpoint = currentView === 'archived' ? '/images/archived' : '/images/mine';
+
+        try {
+          const res = await apiFetch(endpoint);
+          const images = await res.json();
+          if (!res.ok) throw new Error(images.error || 'Failed to load images');
+
+          if (images.length === 0) {
+            imageContainer.innerHTML = '<p class="text-muted">No images to show.</p>';
+            return;
+          }
+
+          for (const image of images) {
+            const el = createImageCard(image, images);
+            imageContainer.appendChild(el);
+          }
+        } catch (err) {
+          status.textContent = err.message;
         }
-
-        for (const image of images) {
-          const el = createImageCard(image, images);
-          imageContainer.appendChild(el);
-        }
-      } catch (err) {
-        statusEl.textContent = err.message;
       }
-    }
 
-    publishedTab.onclick = () => {
-      currentView = 'published';
-      publishedTab.classList.add('active');
-      archivedTab.classList.remove('active');
+      publishedTab.onclick = () => {
+        currentView = 'published';
+        publishedTab.classList.add('active');
+        archivedTab.classList.remove('active');
+        loadImages();
+      };
+
+      archivedTab.onclick = () => {
+        currentView = 'archived';
+        archivedTab.classList.add('active');
+        publishedTab.classList.remove('active');
+        loadImages();
+      };
+
       loadImages();
-    };
-
-    archivedTab.onclick = () => {
-      currentView = 'archived';
-      archivedTab.classList.add('active');
-      publishedTab.classList.remove('active');
-      loadImages();
-    };
-
-    loadImages();
+    });
   </script>
 </body>
 </html>

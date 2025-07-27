@@ -21,45 +21,40 @@ run:
     /bin/bash
 
 docs:
-	${DOCKER_EXEC} compose run \
+	-${DOCKER_EXEC} compose run \
 		-it \
 		--remove-orphans \
 		${DOCKER_CONTAINER_NAME} \
 		rake doc:export
 
 create:
-	-${DOCKER_EXEC} compose run \
-		-it \
+	-${DOCKER_EXEC} compose run --rm \
 		--remove-orphans \
 		${DOCKER_CONTAINER_NAME} \
 		rake db:create
 
 migrate:
-	-${DOCKER_EXEC} compose run \
-		-it \
+	-${DOCKER_EXEC} compose run --rm \
 		--remove-orphans \
 		${DOCKER_CONTAINER_NAME} \
 		rake db:migrate
 
 seed: create migrate
-	-${DOCKER_EXEC} compose run \
-		-it \
+	-${DOCKER_EXEC} compose run --rm \
 		--remove-orphans \
 		${DOCKER_CONTAINER_NAME} \
 		rake db:seed
 
 drop:
-	-${DOCKER_EXEC} compose run \
-		-it \
+	-${DOCKER_EXEC} compose run --rm \
 		--remove-orphans \
 		${DOCKER_CONTAINER_NAME} \
 		rake db:drop
 
 test:
-	-${DOCKER_EXEC} compose run \
-		-it \
+	-${DOCKER_EXEC} compose run --rm \
 		${DOCKER_CONTAINER_NAME} \
-		bundle exec rspec $(filter-out $@,$(MAKECMDGOALS))
+		sh -c "RACK_ENV=test bundle exec rspec $(filter-out $@,$(MAKECMDGOALS))"
 
 console:
 	${DOCKER_EXEC} compose run \

@@ -34,12 +34,18 @@ module Database
 
     private
 
+    def database_url
+      return ENV["TEST_DATABASE_URL"] || raise("TEST_DATABASE_URL not set") if ENV["RACK_ENV"] == "test"
+
+      ENV["DATABASE_URL"] || raise("DATABASE_URL not set")
+    end
+
     def reset_pool
       @pool = nil
     end
 
     def build_pool
-      conn_info = parse_database_url(ENV["DATABASE_URL"])
+      conn_info = parse_database_url(database_url)
       ConnectionPool.new(size: 5, timeout: 5) do
         PG.connect(conn_info)
       end

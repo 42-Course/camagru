@@ -18,20 +18,20 @@
 
 ### API
 
-| Method | Route | Controller's call |
-| ---- | ----------------------------- | ------------------------ |
-| POST |     /signup                   | → UsersController#create |
-| POST |     /login                    | → SessionsController#create |
-| POST |     /logout                   | → SessionsController#destroy |
-| POST |     /password/forgot          | → PasswordResetsController#create |
-| POST |     /password/reset           | → PasswordResetsController#update |
-| GET |      /confirm?token=...        | → UsersController#confirm_email |
-| GET |      /stickers                 | → StickersController#index |
-| GET |      /gallery?page=1           | → GalleryController#index |
-| POST |     /images                   | → ImagesController#create |
-| DELETE |   /images/:id               | → ImagesController#destroy |
-| GET |      /images/mine              | → ImagesController#my_images |
-| POST |     /images/:id/like          | → LikesController#like |
-| DELETE |   /images/:id/unlike        | → LikesController#unlike |
-| POST |     /images/:id/comments      | → CommentsController#create |
-| GET |      /images/:id/comments      | → CommentsController#index |
+| Method | Route | Controller's call | STATUS |
+| ---- | ----------------------------- | ------------------------ | ---- |
+| POST |     /signup                   | → UsersController#create | DONE |
+| POST |     /login                    | → SessionsController#create | DONE |
+| POST |     /logout                   | → SessionsController#destroy | DONE |
+| POST |     /password/forgot          | → PasswordResetsController#create | TODO |
+| POST |     /password/reset           | → PasswordResetsController#update | TODO |
+| GET |      /confirm?token=...        | → UsersController#confirm_email | TODO |
+| GET |      /stickers                 | → StickersController#index | TODO |
+| GET |      /gallery?page=1           | → GalleryController#index | TODO |
+| POST |     /images                   | → ImagesController#create | TODO |
+| DELETE |   /images/:id               | → ImagesController#destroy | TODO |
+| GET |      /images/mine              | → ImagesController#my_images | TODO |
+| POST |     /images/:id/like          | → LikesController#like | TODO |
+| DELETE |   /images/:id/unlike        | → LikesController#unlike | TODO |
+| POST |     /images/:id/comments      | → CommentsController#create | TODO |
+| GET |      /images/:id/comments      | → CommentsController#index | TODO |

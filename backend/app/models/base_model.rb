@@ -2,7 +2,16 @@ require_relative "../lib/db"
 
 class BaseModel
   def self.table_name
-    "#{name.split('::').last.downcase}s"
+    singular_table_name = underscore(name.split("::").last)
+    "#{singular_table_name}s"
+  end
+
+  def self.underscore(str)
+    str
+      .gsub(/([A-Z]+)([A-Z][a-z])/, '\1_\2')
+      .gsub(/([a-z\d])([A-Z])/, '\1_\2')
+      .tr("-", "_")
+      .downcase
   end
 
   def self.all

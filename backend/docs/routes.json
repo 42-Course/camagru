@@ -1,1 +1,69 @@
-[]
+[
+  {
+    "method": "POST",
+    "path": "/login",
+    "description": "Authenticate a user using either username or email. Returns a session token on success.",
+    "auth_required": false,
+    "tags": [
+      "auth",
+      "sessions"
+    ],
+    "params": [
+      {
+        "name": "identity",
+        "type": "String",
+        "required": true,
+        "desc": "Username or email address"
+      },
+      {
+        "name": "password",
+        "type": "String",
+        "required": true,
+        "desc": "User's password"
+      }
+    ],
+    "responses": [
+      {
+        "code": 200,
+        "desc": "Login successful",
+        "example": {
+          "token": "<jwt_token_here>"
+        }
+      },
+      {
+        "code": 400,
+        "desc": "Missing identity or password",
+        "example": {
+          "error": "Missing identity or password"
+        }
+      },
+      {
+        "code": 401,
+        "desc": "Invalid credentials",
+        "example": {
+          "error": "Invalid credentials"
+        }
+      }
+    ]
+  },
+  {
+    "method": "POST",
+    "path": "/logout",
+    "description": "Invalidate current session token. For JWT-based apps, the client must delete the token locally.",
+    "auth_required": true,
+    "tags": [
+      "auth",
+      "sessions"
+    ],
+    "params": [],
+    "responses": [
+      {
+        "code": 200,
+        "desc": "Logout successful",
+        "example": {
+          "message": "Logged out successfully"
+        }
+      }
+    ]
+  }
+]

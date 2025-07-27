@@ -1,0 +1,75 @@
+.profile-header img {
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+.tab-btn.active {
+  font-weight: bold;
+  text-decoration: underline;
+}
+
+.image-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 1rem;
+}
+
+#image-modal {
+  cursor: zoom-out;
+}
+
+#image-modal .modal-content {
+  cursor: default;
+  background: white;
+  border-radius: 8px;
+  overflow: hidden;
+  max-width: 700px;
+  width: 90%;
+  max-height: 95vh;
+  position: relative;
+  padding: 0;
+}
+
+#image-modal img {
+  width: 100%;
+  display: block;
+  position: relative;
+}
+
+#image-modal .nav-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(0, 0, 0, 0.5);
+  color: white;
+  border: none;
+  font-size: 1.5rem;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  cursor: pointer;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+}
+
+#image-modal .nav-arrow:hover {
+  background: rgba(0, 0, 0, 0.8);
+}
+
+#image-modal .nav-arrow.left {
+  left: 16px;
+}
+
+#image-modal .nav-arrow.right {
+  right: 16px;
+}
+
+.comment-section {
+  max-height: 200px;
+  overflow-y: auto;
+}

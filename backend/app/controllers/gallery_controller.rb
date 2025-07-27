@@ -15,7 +15,7 @@ class GalleryController < BaseController
 
     param :page, Integer, required: false, desc: "Page number (default: 1)"
     param :per_page, Integer, required: false, desc: "Items per page (default: 10, max: 100)"
-    param :sort_by, String, required: false, desc: "Field to sort by (only `created_at` supported for now)"
+    param :sort_by, String, required: false, desc: "Sort field: created_at, likes, or comments"
     param :order, String, required: false, desc: "`asc` or `desc` (default: desc)"
 
     response 200, "Paginated images", example: {
@@ -38,13 +38,14 @@ class GalleryController < BaseController
 
     total = Image.gallery_total
     images = Image.gallery_page(page: page, per_page: per_page, sort_by: sort_by, order: order)
+    enriched_images = Image.batch_with_metadata(images)
 
     json_response({
                     page: page,
                     per_page: per_page,
                     total: total,
                     total_pages: (total / per_page.to_f).ceil,
-                    images: images
+                    images: enriched_images
                   })
   end
 end

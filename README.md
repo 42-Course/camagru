@@ -32,8 +32,6 @@
 | POST |     /images/:id/archive       | → ImagesController#archive | OK |
 | GET |      /images/mine              | → ImagesController#my_images | OK |
 | GET |      /images/archived          | → ImagesController#archived | OK |
-| POST |     /images/:id/like          | → LikesController#like | TODO |
-| DELETE |   /images/:id/unlike        | → LikesController#unlike | TODO |
-| POST |     /images/:id/comments      | → CommentsController#create | TODO |
-<!-- | GET |      /images/:id/comments      | → CommentsController#index | TODO | -->
-<!-- | POST |     /images                   | → ImagesController#create | Server side image creation | -->
+| POST |     /images/:id/like          | → LikesController#like | OK |
+| DELETE |   /images/:id/unlike        | → LikesController#unlike | OK |
+| POST |     /images/:id/comments      | → CommentsController#create | OK |

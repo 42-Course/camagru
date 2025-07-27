@@ -15,7 +15,8 @@ class ImagesController < BaseController
 
   get "/images/mine" do
     images = User.images(current_user["id"])
-    json_response(images)
+    enriched_images = Image.batch_with_metadata(images)
+    json_response(enriched_images)
   end
 
   api_doc "/images/archived", method: :get do
@@ -31,7 +32,9 @@ class ImagesController < BaseController
   get "/images/archived" do
     all_images = User.images_and_archives(current_user["id"])
     archived = all_images.select { _1["deleted_at"] }
-    json_response(archived)
+    enriched_archived_images = Image.batch_with_metadata(archived)
+
+    json_response(enriched_archived_images)
   end
 
   api_doc "/images/:id/archive", method: :post do

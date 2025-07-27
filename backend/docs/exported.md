@@ -128,39 +128,6 @@
 ```
 
 ---
-## `POST` /images/:id/comments
-**Description**: Add a comment to a specific image. Authenticated users only.
-**Auth required**: Yes
-**Tags**: comments, images
-
-### Parameters
-- `content` (String) **(required)** - The body of the comment
-
-### Responses
-- `201`: Comment created
-```json
-{
-  "id": 13,
-  "user_id": 4,
-  "image_id": 7,
-  "content": "Amazing overlay!",
-  "created_at": "2024-07-25T12:00:00Z"
-}
-```
-- `400`: Missing or empty comment
-```json
-{
-  "error": "Missing or empty comment"
-}
-```
-- `404`: Image not found
-```json
-{
-  "error": "Image not found"
-}
-```
-
----
 ## `POST` /images/:id/like
 **Description**: Like a specific image. Only authenticated users may like images.
 **Auth required**: Yes
@@ -209,7 +176,7 @@
 ### Parameters
 - `page` (Integer)  - Page number (default: 1)
 - `per_page` (Integer)  - Items per page (default: 10, max: 100)
-- `sort_by` (String)  - Field to sort by (only `created_at` supported for now)
+- `sort_by` (String)  - Sort field: created_at, likes, or comments
 - `order` (String)  - `asc` or `desc` (default: desc)
 
 ### Responses
@@ -390,6 +357,39 @@
 ```json
 {
   "error": "Invalid or expired token"
+}
+```
+
+---
+## `POST` /images/:id/comments
+**Description**: Add a comment to a specific image. Authenticated users only.
+**Auth required**: Yes
+**Tags**: comments, images
+
+### Parameters
+- `content` (String) **(required)** - The body of the comment
+
+### Responses
+- `201`: Comment created
+```json
+{
+  "id": 13,
+  "user_id": 4,
+  "image_id": 7,
+  "content": "Amazing overlay!",
+  "created_at": "2024-07-25T12:00:00Z"
+}
+```
+- `400`: Missing or empty comment
+```json
+{
+  "error": "Missing or empty comment"
+}
+```
+- `404`: Image not found
+```json
+{
+  "error": "Image not found"
 }
 ```
 

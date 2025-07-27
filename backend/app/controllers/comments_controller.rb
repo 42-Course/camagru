@@ -4,27 +4,6 @@ require_relative "../models/image"
 require_relative "../models/user"
 
 class CommentsController < BaseController
-  api_doc "/images/:id/comments", method: :get do
-    description "Fetch all comments for a specific image. Publicly accessible."
-    tags "comments", "images"
-    auth_required value: false
-
-    response 200, "List of comments", example: [
-      {id: 12, user_id: 4, image_id: 7, content: "Nice shot!", created_at: "2024-07-25T10:00:00Z"}
-    ]
-
-    response 404, "Image not found", example: {
-      error: "Image not found"
-    }
-  end
-
-  get "/images/:id/comments" do
-    image = Image.find_by_id(params["id"])
-    halt 404, json_error("Image not found") unless image
-
-    json_response(Image.comments(image["id"]))
-  end
-
   api_doc "/images/:id/comments", method: :post do
     description "Add a comment to a specific image. Authenticated users only."
     tags "comments", "images"

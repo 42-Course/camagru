@@ -1,5 +1,33 @@
 [
   {
+    "method": "GET",
+    "path": "/stickers",
+    "description": "Get the list of available sticker overlays. Public route used by the editor.",
+    "auth_required": false,
+    "tags": [
+      "stickers"
+    ],
+    "params": [],
+    "responses": [
+      {
+        "code": 200,
+        "desc": "List of stickers",
+        "example": [
+          {
+            "id": 1,
+            "name": "Hat",
+            "file_path": "/stickers/hat.png"
+          },
+          {
+            "id": 2,
+            "name": "Laser Eyes",
+            "file_path": "/stickers/lasereyes.png"
+          }
+        ]
+      }
+    ]
+  },
+  {
     "method": "POST",
     "path": "/login",
     "description": "Authenticate a user using either username or email. Returns a session token on success.",
@@ -62,6 +90,249 @@
         "desc": "Logout successful",
         "example": {
           "message": "Logged out successfully"
+        }
+      }
+    ]
+  },
+  {
+    "method": "POST",
+    "path": "/password/forgot",
+    "description": "Request a password reset link.If the email exists, a reset token is sent.The response is always generic to prevent user enumeration.",
+    "auth_required": false,
+    "tags": [
+      "password",
+      "reset"
+    ],
+    "params": [
+      {
+        "name": "email",
+        "type": "String",
+        "required": true,
+        "desc": "The email address of the user requesting a password reset."
+      }
+    ],
+    "responses": [
+      {
+        "code": 200,
+        "desc": "Reset link sent (if account exists)",
+        "example": {
+          "message": "If your email exists, a reset link has been sent"
+        }
+      },
+      {
+        "code": 400,
+        "desc": "Missing email",
+        "example": {
+          "error": "Missing email"
+        }
+      }
+    ]
+  },
+  {
+    "method": "POST",
+    "path": "/password/reset",
+    "description": "Request a password reset link. If the email exists, a reset token is sent.The response is always generic to prevent user enumeration.",
+    "auth_required": false,
+    "tags": [
+      "password",
+      "reset"
+    ],
+    "params": [
+      {
+        "name": "token",
+        "type": "String",
+        "required": true,
+        "desc": "Reset token received by email"
+      },
+      {
+        "name": "password",
+        "type": "String",
+        "required": true,
+        "desc": "New password (minimum 8 characters)"
+      }
+    ],
+    "responses": [
+      {
+        "code": 200,
+        "desc": "Password reset successfully",
+        "example": {
+          "message": "Password reset successfully"
+        }
+      },
+      {
+        "code": 400,
+        "desc": "Missing token or password",
+        "example": {
+          "error": "Missing token or password"
+        }
+      },
+      {
+        "code": 400,
+        "desc": "Password too short",
+        "example": {
+          "error": "Password too short (min 8 chars)"
+        }
+      },
+      {
+        "code": 400,
+        "desc": "Invalid or expired token",
+        "example": {
+          "error": "Invalid or expired token"
+        }
+      }
+    ]
+  },
+  {
+    "method": "POST",
+    "path": "/images/:id/comments",
+    "description": "Add a comment to a specific image. Authenticated users only.",
+    "auth_required": true,
+    "tags": [
+      "comments",
+      "images"
+    ],
+    "params": [
+      {
+        "name": "content",
+        "type": "String",
+        "required": true,
+        "desc": "The body of the comment"
+      }
+    ],
+    "responses": [
+      {
+        "code": 201,
+        "desc": "Comment created",
+        "example": {
+          "id": 13,
+          "user_id": 4,
+          "image_id": 7,
+          "content": "Amazing overlay!",
+          "created_at": "2024-07-25T12:00:00Z"
+        }
+      },
+      {
+        "code": 400,
+        "desc": "Missing or empty comment",
+        "example": {
+          "error": "Missing or empty comment"
+        }
+      },
+      {
+        "code": 404,
+        "desc": "Image not found",
+        "example": {
+          "error": "Image not found"
+        }
+      }
+    ]
+  },
+  {
+    "method": "POST",
+    "path": "/images/:id/like",
+    "description": "Like a specific image. Only authenticated users may like images.",
+    "auth_required": true,
+    "tags": [
+      "likes",
+      "images"
+    ],
+    "params": [],
+    "responses": [
+      {
+        "code": 200,
+        "desc": "Image liked",
+        "example": {
+          "message": "Image liked"
+        }
+      },
+      {
+        "code": 404,
+        "desc": "Image not found",
+        "example": {
+          "error": "Image not found"
+        }
+      }
+    ]
+  },
+  {
+    "method": "DELETE",
+    "path": "/images/:id/unlike",
+    "description": "Unlike a previously liked image. Only authenticated users may unlike.",
+    "auth_required": true,
+    "tags": [
+      "likes",
+      "images"
+    ],
+    "params": [],
+    "responses": [
+      {
+        "code": 200,
+        "desc": "Image unliked",
+        "example": {
+          "message": "Image unliked"
+        }
+      },
+      {
+        "code": 404,
+        "desc": "Image not found",
+        "example": {
+          "error": "Image not found"
+        }
+      }
+    ]
+  },
+  {
+    "method": "GET",
+    "path": "/gallery",
+    "description": "List all public images in the gallery with support for pagination, sorting, and custom per-page limits.",
+    "auth_required": false,
+    "tags": [
+      "gallery",
+      "images"
+    ],
+    "params": [
+      {
+        "name": "page",
+        "type": "Integer",
+        "required": false,
+        "desc": "Page number (default: 1)"
+      },
+      {
+        "name": "per_page",
+        "type": "Integer",
+        "required": false,
+        "desc": "Items per page (default: 10, max: 100)"
+      },
+      {
+        "name": "sort_by",
+        "type": "String",
+        "required": false,
+        "desc": "Field to sort by (only `created_at` supported for now)"
+      },
+      {
+        "name": "order",
+        "type": "String",
+        "required": false,
+        "desc": "`asc` or `desc` (default: desc)"
+      }
+    ],
+    "responses": [
+      {
+        "code": 200,
+        "desc": "Paginated images",
+        "example": {
+          "page": 1,
+          "per_page": 5,
+          "total": 32,
+          "total_pages": 7,
+          "images": [
+            {
+              "id": 3,
+              "file_path": "/images/abc.png",
+              "user_id": 1,
+              "created_at": "..."
+            }
+          ]
         }
       }
     ]
@@ -181,122 +452,6 @@
     ]
   },
   {
-    "method": "GET",
-    "path": "/stickers",
-    "description": "Get the list of available sticker overlays. Public route used by the editor.",
-    "auth_required": false,
-    "tags": [
-      "stickers"
-    ],
-    "params": [],
-    "responses": [
-      {
-        "code": 200,
-        "desc": "List of stickers",
-        "example": [
-          {
-            "id": 1,
-            "name": "Hat",
-            "file_path": "/stickers/hat.png"
-          },
-          {
-            "id": 2,
-            "name": "Laser Eyes",
-            "file_path": "/stickers/lasereyes.png"
-          }
-        ]
-      }
-    ]
-  },
-  {
-    "method": "POST",
-    "path": "/password/forgot",
-    "description": "Request a password reset link.If the email exists, a reset token is sent.The response is always generic to prevent user enumeration.",
-    "auth_required": false,
-    "tags": [
-      "password",
-      "reset"
-    ],
-    "params": [
-      {
-        "name": "email",
-        "type": "String",
-        "required": true,
-        "desc": "The email address of the user requesting a password reset."
-      }
-    ],
-    "responses": [
-      {
-        "code": 200,
-        "desc": "Reset link sent (if account exists)",
-        "example": {
-          "message": "If your email exists, a reset link has been sent"
-        }
-      },
-      {
-        "code": 400,
-        "desc": "Missing email",
-        "example": {
-          "error": "Missing email"
-        }
-      }
-    ]
-  },
-  {
-    "method": "POST",
-    "path": "/password/reset",
-    "description": "Request a password reset link. If the email exists, a reset token is sent.The response is always generic to prevent user enumeration.",
-    "auth_required": false,
-    "tags": [
-      "password",
-      "reset"
-    ],
-    "params": [
-      {
-        "name": "token",
-        "type": "String",
-        "required": true,
-        "desc": "Reset token received by email"
-      },
-      {
-        "name": "password",
-        "type": "String",
-        "required": true,
-        "desc": "New password (minimum 8 characters)"
-      }
-    ],
-    "responses": [
-      {
-        "code": 200,
-        "desc": "Password reset successfully",
-        "example": {
-          "message": "Password reset successfully"
-        }
-      },
-      {
-        "code": 400,
-        "desc": "Missing token or password",
-        "example": {
-          "error": "Missing token or password"
-        }
-      },
-      {
-        "code": 400,
-        "desc": "Password too short",
-        "example": {
-          "error": "Password too short (min 8 chars)"
-        }
-      },
-      {
-        "code": 400,
-        "desc": "Invalid or expired token",
-        "example": {
-          "error": "Invalid or expired token"
-        }
-      }
-    ]
-  },
-  {
     "method": "POST",
     "path": "/signup",
     "description": "Register a new user. Sends a confirmation email with a validation token.",
@@ -400,62 +555,6 @@
         "desc": "Invalid or missing token",
         "example": {
           "error": "Invalid or expired token"
-        }
-      }
-    ]
-  },
-  {
-    "method": "GET",
-    "path": "/gallery",
-    "description": "List all public images in the gallery with support for pagination, sorting, and custom per-page limits.",
-    "auth_required": false,
-    "tags": [
-      "gallery",
-      "images"
-    ],
-    "params": [
-      {
-        "name": "page",
-        "type": "Integer",
-        "required": false,
-        "desc": "Page number (default: 1)"
-      },
-      {
-        "name": "per_page",
-        "type": "Integer",
-        "required": false,
-        "desc": "Items per page (default: 10, max: 100)"
-      },
-      {
-        "name": "sort_by",
-        "type": "String",
-        "required": false,
-        "desc": "Field to sort by (only `created_at` supported for now)"
-      },
-      {
-        "name": "order",
-        "type": "String",
-        "required": false,
-        "desc": "`asc` or `desc` (default: desc)"
-      }
-    ],
-    "responses": [
-      {
-        "code": 200,
-        "desc": "Paginated images",
-        "example": {
-          "page": 1,
-          "per_page": 5,
-          "total": 32,
-          "total_pages": 7,
-          "images": [
-            {
-              "id": 3,
-              "file_path": "/images/abc.png",
-              "user_id": 1,
-              "created_at": "..."
-            }
-          ]
         }
       }
     ]

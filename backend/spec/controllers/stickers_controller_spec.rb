@@ -2,8 +2,6 @@ require "spec_helper"
 require_relative "../../app/models/sticker"
 
 RSpec.describe StickersController do
-  def app = StickersController
-
   before do
     Database.with_conn do |conn|
       conn.exec_params(

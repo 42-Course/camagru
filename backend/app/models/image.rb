@@ -1,4 +1,6 @@
 require_relative "./base_model"
+require_relative "./image"
+require_relative "./comment"
 
 class Image < BaseModel
   DEFAULT_SORT_BY   = "created_at".freeze
@@ -22,6 +24,14 @@ class Image < BaseModel
       ORDER BY #{sort_column} #{sort_order}
       LIMIT $1 OFFSET $2
     SQL
+  end
+
+  def self.comments(image_id)
+    Comment.find_by_image(image_id)
+  end
+
+  def self.likes(image_id)
+    Like.find_by_image(image_id)
   end
 
   def self.create(user_id:, file_path:)

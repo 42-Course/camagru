@@ -1,6 +1,8 @@
 require "spec_helper"
 require_relative "../../app/models/user"
 require_relative "../../app/models/image"
+require_relative "../../app/models/comment"
+require_relative "../../app/models/like"
 
 # rubocop:disable Metrics/BlockLength
 
@@ -108,6 +110,28 @@ RSpec.describe Image do
       images = Image.gallery_page(page: 1, per_page: 10)
       file_paths = images.map { _1["file_path"] }
       expect(file_paths).not_to include("/images/archived1.png", "/images/archived2.png")
+    end
+  end
+
+  describe ".comments and .likes" do
+    it "returns comments for an image" do
+      image = Image.create(user_id: user["id"], file_path: "/images/photo5.png")
+
+      Comment.create(user_id: user["id"], image_id: image["id"], content: "Nice!")
+      results = Image.comments(image["id"])
+
+      expect(results).to be_an(Array)
+      expect(results.first["content"]).to eq("Nice!")
+    end
+
+    it "returns likes for an image" do
+      image = Image.create(user_id: user["id"], file_path: "/images/photo5.png")
+
+      Like.create(user_id: user["id"], image_id: image["id"])
+      results = Image.likes(image["id"])
+
+      expect(results).to be_an(Array)
+      expect(results.first["user_id"].to_i).to eq(user["id"].to_i)
     end
   end
 end

@@ -2,29 +2,6 @@
 
 > **Note:** All authenticated endpoints require a valid token via `Authorization: Bearer <token>`.
 
-## `GET` /stickers
-**Description**: Get the list of available sticker overlays. Public route used by the editor.
-**Auth required**: No
-**Tags**: stickers
-
-### Responses
-- `200`: List of stickers
-```json
-[
-  {
-    "id": 1,
-    "name": "Hat",
-    "file_path": "/stickers/hat.png"
-  },
-  {
-    "id": 2,
-    "name": "Laser Eyes",
-    "file_path": "/stickers/lasereyes.png"
-  }
-]
-```
-
----
 ## `POST` /login
 **Description**: Authenticate a user using either username or email. Returns a session token on success.
 **Auth required**: No
@@ -66,6 +43,119 @@
 {
   "message": "Logged out successfully"
 }
+```
+
+---
+## `GET` /images/mine
+**Description**: Retrieve the current user's active (non-archived) images.
+**Auth required**: Yes
+**Tags**: images
+
+### Responses
+- `200`: List of active images
+```json
+[
+  {
+    "id": 1,
+    "file_path": "/images/abc.png",
+    "user_id": 4,
+    "deleted_at": null
+  }
+]
+```
+
+---
+## `GET` /images/archived
+**Description**: Retrieve the current user's archived (soft-deleted) images.
+**Auth required**: Yes
+**Tags**: images
+
+### Responses
+- `200`: List of archived images
+```json
+[
+  {
+    "id": 2,
+    "file_path": "/images/old.png",
+    "user_id": 4,
+    "deleted_at": "2024-01-01T10:00:00Z"
+  }
+]
+```
+
+---
+## `POST` /images/:id/archive
+**Description**: Soft-delete (archive) an image owned by the current user.
+**Auth required**: Yes
+**Tags**: images
+
+### Responses
+- `200`: Image archived
+```json
+{
+  "message": "Image archived successfully"
+}
+```
+- `403`: Unauthorized (not owner)
+```json
+{
+  "error": "Unauthorized"
+}
+```
+- `404`: Image not found
+```json
+{
+  "error": "Image not found"
+}
+```
+
+---
+## `DELETE` /images/:id
+**Description**: Permanently delete an image owned by the current user.
+**Auth required**: Yes
+**Tags**: images
+
+### Responses
+- `200`: Image deleted
+```json
+{
+  "message": "Image deleted successfully"
+}
+```
+- `403`: Unauthorized (not owner)
+```json
+{
+  "error": "Unauthorized"
+}
+```
+- `404`: Image not found
+```json
+{
+  "error": "Image not found"
+}
+```
+
+---
+## `GET` /stickers
+**Description**: Get the list of available sticker overlays. Public route used by the editor.
+**Auth required**: No
+**Tags**: stickers
+
+### Responses
+- `200`: List of stickers
+```json
+[
+  {
+    "id": 1,
+    "name": "Hat",
+    "file_path": "/stickers/hat.png"
+  },
+  {
+    "id": 2,
+    "name": "Laser Eyes",
+    "file_path": "/stickers/lasereyes.png"
+  }
+]
 ```
 
 ---
@@ -227,96 +317,6 @@
       "created_at": "..."
     }
   ]
-}
-```
-
----
-## `GET` /images/mine
-**Description**: Retrieve the current user's active (non-archived) images.
-**Auth required**: Yes
-**Tags**: images
-
-### Responses
-- `200`: List of active images
-```json
-[
-  {
-    "id": 1,
-    "file_path": "/images/abc.png",
-    "user_id": 4,
-    "deleted_at": null
-  }
-]
-```
-
----
-## `GET` /images/archived
-**Description**: Retrieve the current user's archived (soft-deleted) images.
-**Auth required**: Yes
-**Tags**: images
-
-### Responses
-- `200`: List of archived images
-```json
-[
-  {
-    "id": 2,
-    "file_path": "/images/old.png",
-    "user_id": 4,
-    "deleted_at": "2024-01-01T10:00:00Z"
-  }
-]
-```
-
----
-## `POST` /images/:id/archive
-**Description**: Soft-delete (archive) an image owned by the current user.
-**Auth required**: Yes
-**Tags**: images
-
-### Responses
-- `200`: Image archived
-```json
-{
-  "message": "Image archived successfully"
-}
-```
-- `403`: Unauthorized (not owner)
-```json
-{
-  "error": "Unauthorized"
-}
-```
-- `404`: Image not found
-```json
-{
-  "error": "Image not found"
-}
-```
-
----
-## `DELETE` /images/:id
-**Description**: Permanently delete an image owned by the current user.
-**Auth required**: Yes
-**Tags**: images
-
-### Responses
-- `200`: Image deleted
-```json
-{
-  "message": "Image deleted successfully"
-}
-```
-- `403`: Unauthorized (not owner)
-```json
-{
-  "error": "Unauthorized"
-}
-```
-- `404`: Image not found
-```json
-{
-  "error": "Image not found"
 }
 ```
 

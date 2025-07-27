@@ -1,33 +1,5 @@
 [
   {
-    "method": "GET",
-    "path": "/stickers",
-    "description": "Get the list of available sticker overlays. Public route used by the editor.",
-    "auth_required": false,
-    "tags": [
-      "stickers"
-    ],
-    "params": [],
-    "responses": [
-      {
-        "code": 200,
-        "desc": "List of stickers",
-        "example": [
-          {
-            "id": 1,
-            "name": "Hat",
-            "file_path": "/stickers/hat.png"
-          },
-          {
-            "id": 2,
-            "name": "Laser Eyes",
-            "file_path": "/stickers/lasereyes.png"
-          }
-        ]
-      }
-    ]
-  },
-  {
     "method": "POST",
     "path": "/login",
     "description": "Authenticate a user using either username or email. Returns a session token on success.",
@@ -91,6 +63,148 @@
         "example": {
           "message": "Logged out successfully"
         }
+      }
+    ]
+  },
+  {
+    "method": "GET",
+    "path": "/images/mine",
+    "description": "Retrieve the current user's active (non-archived) images.",
+    "auth_required": true,
+    "tags": [
+      "images"
+    ],
+    "params": [],
+    "responses": [
+      {
+        "code": 200,
+        "desc": "List of active images",
+        "example": [
+          {
+            "id": 1,
+            "file_path": "/images/abc.png",
+            "user_id": 4,
+            "deleted_at": null
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "method": "GET",
+    "path": "/images/archived",
+    "description": "Retrieve the current user's archived (soft-deleted) images.",
+    "auth_required": true,
+    "tags": [
+      "images"
+    ],
+    "params": [],
+    "responses": [
+      {
+        "code": 200,
+        "desc": "List of archived images",
+        "example": [
+          {
+            "id": 2,
+            "file_path": "/images/old.png",
+            "user_id": 4,
+            "deleted_at": "2024-01-01T10:00:00Z"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "method": "POST",
+    "path": "/images/:id/archive",
+    "description": "Soft-delete (archive) an image owned by the current user.",
+    "auth_required": true,
+    "tags": [
+      "images"
+    ],
+    "params": [],
+    "responses": [
+      {
+        "code": 200,
+        "desc": "Image archived",
+        "example": {
+          "message": "Image archived successfully"
+        }
+      },
+      {
+        "code": 403,
+        "desc": "Unauthorized (not owner)",
+        "example": {
+          "error": "Unauthorized"
+        }
+      },
+      {
+        "code": 404,
+        "desc": "Image not found",
+        "example": {
+          "error": "Image not found"
+        }
+      }
+    ]
+  },
+  {
+    "method": "DELETE",
+    "path": "/images/:id",
+    "description": "Permanently delete an image owned by the current user.",
+    "auth_required": true,
+    "tags": [
+      "images"
+    ],
+    "params": [],
+    "responses": [
+      {
+        "code": 200,
+        "desc": "Image deleted",
+        "example": {
+          "message": "Image deleted successfully"
+        }
+      },
+      {
+        "code": 403,
+        "desc": "Unauthorized (not owner)",
+        "example": {
+          "error": "Unauthorized"
+        }
+      },
+      {
+        "code": 404,
+        "desc": "Image not found",
+        "example": {
+          "error": "Image not found"
+        }
+      }
+    ]
+  },
+  {
+    "method": "GET",
+    "path": "/stickers",
+    "description": "Get the list of available sticker overlays. Public route used by the editor.",
+    "auth_required": false,
+    "tags": [
+      "stickers"
+    ],
+    "params": [],
+    "responses": [
+      {
+        "code": 200,
+        "desc": "List of stickers",
+        "example": [
+          {
+            "id": 1,
+            "name": "Hat",
+            "file_path": "/stickers/hat.png"
+          },
+          {
+            "id": 2,
+            "name": "Laser Eyes",
+            "file_path": "/stickers/lasereyes.png"
+          }
+        ]
       }
     ]
   },
@@ -342,120 +456,6 @@
               "created_at": "..."
             }
           ]
-        }
-      }
-    ]
-  },
-  {
-    "method": "GET",
-    "path": "/images/mine",
-    "description": "Retrieve the current user's active (non-archived) images.",
-    "auth_required": true,
-    "tags": [
-      "images"
-    ],
-    "params": [],
-    "responses": [
-      {
-        "code": 200,
-        "desc": "List of active images",
-        "example": [
-          {
-            "id": 1,
-            "file_path": "/images/abc.png",
-            "user_id": 4,
-            "deleted_at": null
-          }
-        ]
-      }
-    ]
-  },
-  {
-    "method": "GET",
-    "path": "/images/archived",
-    "description": "Retrieve the current user's archived (soft-deleted) images.",
-    "auth_required": true,
-    "tags": [
-      "images"
-    ],
-    "params": [],
-    "responses": [
-      {
-        "code": 200,
-        "desc": "List of archived images",
-        "example": [
-          {
-            "id": 2,
-            "file_path": "/images/old.png",
-            "user_id": 4,
-            "deleted_at": "2024-01-01T10:00:00Z"
-          }
-        ]
-      }
-    ]
-  },
-  {
-    "method": "POST",
-    "path": "/images/:id/archive",
-    "description": "Soft-delete (archive) an image owned by the current user.",
-    "auth_required": true,
-    "tags": [
-      "images"
-    ],
-    "params": [],
-    "responses": [
-      {
-        "code": 200,
-        "desc": "Image archived",
-        "example": {
-          "message": "Image archived successfully"
-        }
-      },
-      {
-        "code": 403,
-        "desc": "Unauthorized (not owner)",
-        "example": {
-          "error": "Unauthorized"
-        }
-      },
-      {
-        "code": 404,
-        "desc": "Image not found",
-        "example": {
-          "error": "Image not found"
-        }
-      }
-    ]
-  },
-  {
-    "method": "DELETE",
-    "path": "/images/:id",
-    "description": "Permanently delete an image owned by the current user.",
-    "auth_required": true,
-    "tags": [
-      "images"
-    ],
-    "params": [],
-    "responses": [
-      {
-        "code": 200,
-        "desc": "Image deleted",
-        "example": {
-          "message": "Image deleted successfully"
-        }
-      },
-      {
-        "code": 403,
-        "desc": "Unauthorized (not owner)",
-        "example": {
-          "error": "Unauthorized"
-        }
-      },
-      {
-        "code": 404,
-        "desc": "Image not found",
-        "example": {
-          "error": "Image not found"
         }
       }
     ]

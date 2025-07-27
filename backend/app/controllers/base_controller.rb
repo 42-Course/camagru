@@ -37,7 +37,7 @@ class BaseController < Sinatra::Base
     attr_reader :current_user
 
     def public_path?
-      request.path_info =~ %r{^/(auth|email|gallery|stickers|signup|login)} || request.path_info == "/"
+      request.path_info =~ %r{^/(gallery|stickers|signup|login|confirm)} || request.path_info == "/"
     end
   end
 

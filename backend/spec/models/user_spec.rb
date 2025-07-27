@@ -76,5 +76,17 @@ RSpec.describe User do
       expect(updated["confirmed_at"]).not_to be_nil
     end
   end
+
+  describe ".update_password!" do
+    it "hashes and updates the password" do
+      user = User.create(username: "u_#{SecureRandom.hex(2)}", email: "test@u.com", password: "original123")
+      new_raw_password = "newsecurepass123"
+
+      User.update_password!(user["id"], new_raw_password)
+      updated = User.find_by_id(user["id"])
+
+      expect(PasswordHasher.valid_password?(new_raw_password, updated["password_hash"])).to be true
+    end
+  end
 end
 # rubocop:enable Metrics/BlockLength

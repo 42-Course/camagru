@@ -20,12 +20,12 @@
 
 | Method | Route | Controller's call | STATUS |
 | ---- | ----------------------------- | ------------------------ | ---- |
-| POST |     /signup                   | → UsersController#create | DONE |
-| POST |     /login                    | → SessionsController#create | DONE |
-| POST |     /logout                   | → SessionsController#destroy | DONE |
-| POST |     /password/forgot          | → PasswordResetsController#create | TODO |
-| POST |     /password/reset           | → PasswordResetsController#update | TODO |
-| GET |      /confirm?token=...        | → UsersController#confirm_email | TODO |
+| POST |     /signup                   | → UsersController#create | OK |
+| POST |     /login                    | → SessionsController#create | OK |
+| POST |     /logout                   | → SessionsController#destroy | OK |
+| POST |     /password/forgot          | → PasswordResetsController#create | OK |
+| POST |     /password/reset           | → PasswordResetsController#update | OK |
+| GET |      /confirm?token=...        | → UsersController#confirm_email | OK |
 | GET |      /stickers                 | → StickersController#index | TODO |
 | GET |      /gallery?page=1           | → GalleryController#index | TODO |
 | POST |     /images                   | → ImagesController#create | TODO |

@@ -25,4 +25,12 @@ class User < BaseModel
   def self.confirm_email!(user_id)
     query("UPDATE #{table_name} SET confirmed_at = NOW(), updated_at = NOW() WHERE id = $1", [user_id])
   end
+
+  def self.update_password!(user_id, raw_password)
+    hashed = PasswordHasher.hash_password(raw_password)
+    query(
+      "UPDATE #{table_name} SET password_hash = $1, updated_at = NOW() WHERE id = $2",
+      [hashed, user_id]
+    )
+  end
 end

@@ -21,4 +21,8 @@ class User < BaseModel
 
     result[0]
   end
+
+  def self.confirm_email!(user_id)
+    query("UPDATE #{table_name} SET confirmed_at = NOW(), updated_at = NOW() WHERE id = $1", [user_id])
+  end
 end

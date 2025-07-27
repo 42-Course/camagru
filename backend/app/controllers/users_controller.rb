@@ -61,4 +61,33 @@ class UsersController < BaseController
     status 201
     json_response({message: "Confirmation email sent"}, status: 201)
   end
+
+  api_doc "/confirm", method: :get do
+    description "Confirm user email using the token sent during registration."
+    tags "auth", "email"
+    auth_required value: false
+
+    param :token, String, required: true, desc: "Confirmation token sent via email"
+
+    response 200, "Email confirmed", example: {
+      message: "Email confirmed successfully!"
+    }
+
+    response 400, "Invalid or missing token", example: {
+      error: "Invalid or expired token"
+    }
+  end
+
+  get "/confirm" do
+    token = params["token"].to_s.strip
+    halt 400, json_error("Missing token") if token.empty?
+
+    record = EmailConfirmation.find_by_token(token)
+    halt 400, json_error("Invalid or expired token") unless record
+
+    User.confirm_email!(record["user_id"])
+    EmailConfirmation.delete_by_token(token)
+
+    json_response({message: "Email confirmed successfully!"})
+  end
 end

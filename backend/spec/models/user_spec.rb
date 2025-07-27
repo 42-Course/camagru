@@ -64,5 +64,17 @@ RSpec.describe User do
       expect(users.map {|u| u["email"] }).to include(user_data[:email])
     end
   end
+
+  describe ".confirm_email!" do
+    it "sets confirmed_at for the given user" do
+      user = User.create(**user_data)
+      expect(user["confirmed_at"]).to be_nil
+
+      User.confirm_email!(user["id"])
+      updated = User.find_by_id(user["id"])
+
+      expect(updated["confirmed_at"]).not_to be_nil
+    end
+  end
 end
 # rubocop:enable Metrics/BlockLength

@@ -10,4 +10,13 @@ class EmailConfirmation < BaseModel
 
     result[0]
   end
+
+  def self.find_by_token(token)
+    result = query("SELECT * FROM #{table_name} WHERE token = $1 LIMIT 1", [token])
+    result.ntuples.positive? ? result[0] : nil
+  end
+
+  def self.delete_by_token(token)
+    query("DELETE FROM #{table_name} WHERE token = $1", [token])
+  end
 end

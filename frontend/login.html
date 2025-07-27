@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Login – Camagru</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
+</head>
+<body class="container py-5">
+  <h2 class="mb-4">Login</h2>
+
+  <form id="login-form">
+    <div class="mb-3">
+      <label for="identity" class="form-label">Username or Email</label>
+      <input type="text" id="identity" class="form-control" required />
+    </div>
+    <div class="mb-3">
+      <label for="password" class="form-label">Password</label>
+      <input type="password" id="password" class="form-control" required />
+    </div>
+
+    <div class="d-flex gap-2 flex-wrap">
+      <button type="submit" class="btn btn-primary">Login</button>
+      <a href="register.html" class="btn btn-secondary">Register</a>
+      <a href="forgot-password.html" class="btn btn-link ms-auto">Forgot password?</a>
+    </div>
+  </form>
+
+  <div id="login-error" class="text-danger mt-3"></div>
+
+  <script type="module">
+    import { saveAuth, redirectIfLoggedIn } from './js/auth.js';
+    import { apiFetch } from './js/api.js';
+
+    redirectIfLoggedIn('/profile.html');
+
+    const form = document.getElementById('login-form');
+    const errorBox = document.getElementById('login-error');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      errorBox.textContent = '';
+
+      const identity = form.identity.value;
+      const password = form.password.value;
+
+      try {
+        const res = await apiFetch('/login', {
+          method: 'POST',
+          body: JSON.stringify({ identity, password })
+        });
+
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Login failed.');
+
+        saveAuth(data.token, { identity });
+        location.href = '/profile.html';
+      } catch (err) {
+        errorBox.textContent = err.message;
+      }
+    });
+  </script>
+</body>
+</html>

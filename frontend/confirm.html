@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Confirm Email – Camagru</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
+</head>
+<body class="container py-5">
+  <h2 class="mb-4">Email Confirmation</h2>
+  <div id="status" class="alert alert-info">Confirming your email...</div>
+
+  <script type="module">
+    import { apiFetch } from './js/api.js';
+
+    const status = document.getElementById('status');
+
+    const params = new URLSearchParams(window.location.search);
+    const token = params.get('token');
+
+    if (!token) {
+      status.className = 'alert alert-danger';
+      status.textContent = 'Missing confirmation token.';
+    } else {
+      apiFetch(`/confirm?token=${encodeURIComponent(token)}`, {
+        method: 'GET'
+      })
+      .then(async (res) => {
+        const data = await res.json();
+        if (!res.ok) {
+          throw new Error(data.error || 'Confirmation failed.');
+        }
+
+        status.className = 'alert alert-success';
+        status.textContent = data.message || 'Email confirmed successfully!';
+        setTimeout(() => {
+          window.location.href = '/login.html';
+        }, 3000);
+      })
+      .catch((err) => {
+        status.className = 'alert alert-danger';
+        status.textContent = err.message;
+      });
+    }
+  </script>
+</body>
+</html>

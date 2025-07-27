@@ -2,7 +2,7 @@ require "mail"
 
 class EmailSender
   FROM_EMAIL = "no-reply@camagru.local".freeze
-  DOMAIN = ENV.fetch("APP_ENV", "development") != "development" ? "https://camagru.app" : "http://localhost:5173"
+  DOMAIN = ENV.fetch("APP_ENV", "development") != "development" ? "https://camagru.app" : "http://localhost:8000"
 
   def self.setup
     Mail.defaults do
@@ -50,7 +50,7 @@ class EmailSender
           <h2>Welcome to Camagru!</h2>
           <p>Thanks for registering. Please confirm your account:</p>
           <p>
-            <a href="#{DOMAIN}/confirm?token=#{token}"
+            <a href="#{DOMAIN}/confirm.html?token=#{token}"
                style="background: #22c55e; color: white; padding: 10px 16px; border-radius: 5px; text-decoration: none;">
               Confirm My Account
             </a>
@@ -68,7 +68,7 @@ class EmailSender
           <h2>Reset Your Password</h2>
           <p>Click the button below to reset your Camagru password:</p>
           <p>
-            <a href="#{DOMAIN}/reset-password?token=#{token}"
+            <a href="#{DOMAIN}/reset-password.html?token=#{token}"
                style="background: #ef4444; color: white; padding: 10px 16px; border-radius: 5px; text-decoration: none;">
               Reset Password
             </a>

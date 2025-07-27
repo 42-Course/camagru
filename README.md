@@ -28,9 +28,11 @@
 | GET |      /confirm?token=...        | → UsersController#confirm_email | OK |
 | GET |      /stickers                 | → StickersController#index | OK |
 | GET |      /gallery?page=1           | → GalleryController#index | TODO |
-| POST |     /images                   | → ImagesController#create | TODO |
+<!-- | POST |     /images                   | → ImagesController#create | Server side image creation | -->
 | DELETE |   /images/:id               | → ImagesController#destroy | TODO |
+| POST |     /images/:id/archive       | → ImagesController#archive | TODO |
 | GET |      /images/mine              | → ImagesController#my_images | TODO |
+| GET |      /images/archived          | → ImagesController#archived | TODO |
 | POST |     /images/:id/like          | → LikesController#like | TODO |
 | DELETE |   /images/:id/unlike        | → LikesController#unlike | TODO |
 | POST |     /images/:id/comments      | → CommentsController#create | TODO |

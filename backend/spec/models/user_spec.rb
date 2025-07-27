@@ -1,5 +1,6 @@
 require "spec_helper"
 require_relative "../../app/models/user"
+require_relative "../../app/models/image"
 
 # rubocop:disable Metrics/BlockLength
 RSpec.describe User do
@@ -86,6 +87,23 @@ RSpec.describe User do
       updated = User.find_by_id(user["id"])
 
       expect(PasswordHasher.valid_password?(new_raw_password, updated["password_hash"])).to be true
+    end
+  end
+
+  describe ".images and .images_and_archives" do
+    it "exposes image associations" do
+      user = User.create(**user_data)
+
+      img1 = Image.create(user_id: user["id"], file_path: "/images/a1.png")
+      img2 = Image.create(user_id: user["id"], file_path: "/images/a2.png")
+      Image.soft_delete(img2["id"])
+
+      active = User.images(user["id"])
+      all = User.images_and_archives(user["id"])
+
+      expect(active.map { _1["id"].to_i }).to include(img1["id"].to_i)
+      expect(active.map { _1["id"].to_i }).not_to include(img2["id"].to_i)
+      expect(all.map { _1["id"].to_i }).to include(img1["id"].to_i, img2["id"].to_i)
     end
   end
 end

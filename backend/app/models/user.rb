@@ -33,4 +33,12 @@ class User < BaseModel
       [hashed, user_id]
     )
   end
+
+  def self.images(user_id)
+    Image.find_by_user(user_id, exclude_archived: true)
+  end
+
+  def self.images_and_archives(user_id)
+    Image.find_by_user(user_id, exclude_archived: false)
+  end
 end

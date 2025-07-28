@@ -12,11 +12,22 @@ export function renderNavbar() {
       <a class="navbar-brand" href="index.html">Camagru</a>
       <div>
         ${user ? `
-          <a href="profile.html" class="btn btn-outline-primary me-2">Profile</a>
-          <button class="btn btn-outline-danger" id="logout-btn">Logout</button>
+          <a href="camagru.html" class="btn btn-outline-secondary me-2">
+            <i class="bi bi-camera"></i> Camagru
+          </a>
+          <a href="profile.html" class="btn btn-outline-primary me-2">
+            <i class="bi bi-person-circle"></i> Profile
+          </a>
+          <button class="btn btn-outline-danger" id="logout-btn">
+            <i class="bi bi-box-arrow-right"></i> Logout
+          </button>
         ` : `
-          <a href="login.html" class="btn btn-outline-primary me-2">Login</a>
-          <a href="register.html" class="btn btn-outline-success">Sign Up</a>
+          <a href="login.html" class="btn btn-outline-primary me-2">
+            <i class="bi bi-box-arrow-in-right"></i> Login
+          </a>
+          <a href="register.html" class="btn btn-outline-success">
+            <i class="bi bi-person-plus"></i> Sign Up
+          </a>
         `}
       </div>
     </div>
@@ -37,7 +48,7 @@ export function renderNavbar() {
 
 export function renderFooter() {
   const footer = document.createElement('footer');
-  footer.className = 'text-center py-4 mt-5 border-top text-muted';
+  footer.className = 'text-center py-4 mt-1 border-top text-muted';
   footer.textContent = '© 2025 Camagru by pulgamecanica';
   return footer;
 }

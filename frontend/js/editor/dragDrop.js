@@ -4,7 +4,7 @@ import { clamp } from '../utils.js';
 
 export function enableStickerDragAndDrop() {
   const preview = document.getElementById('preview-container');
-  const content = document.getElementById('preview-content');
+  const content = document.getElementById('preview-stickers');
 
   // Allow drop
   preview.addEventListener('dragover', (e) => {
@@ -77,7 +77,7 @@ function makeMovable(el) {
   document.addEventListener('mousemove', (e) => {
     if (!isDragging) return;
 
-    const container = document.getElementById('preview-content');
+    const container = document.getElementById('preview-stickers');
     const rect = container.getBoundingClientRect();
     const x = e.clientX - rect.left - offsetX;
     const y = e.clientY - rect.top - offsetY;

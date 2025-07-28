@@ -1,5 +1,3 @@
-// /js/components/imageModal.js
-
 import { isLoggedIn, getCurrentUser } from '../auth.js';
 import { apiFetch } from '../api.js';
 

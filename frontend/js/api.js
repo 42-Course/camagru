@@ -1,5 +1,3 @@
-// /frontend/js/api.js
-
 import { getToken } from './auth.js';
 
 const API_BASE = 'http://localhost:9292';

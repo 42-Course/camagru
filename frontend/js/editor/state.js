@@ -7,6 +7,13 @@ export const stickersState = {
   add(stickerEl) {
     this.placed.push(stickerEl);
     this.selected = stickerEl;
+    updateSaveButtonState();
+  },
+
+  remove(stickerEl) {
+    this.placed = this.placed.filter(el => el !== stickerEl);
+    if (this.selected === stickerEl) this.selected = null;
+    updateSaveButtonState();
   },
 
   getSelected() {
@@ -27,3 +34,10 @@ export const stickersState = {
     }));
   }
 };
+
+function updateSaveButtonState() {
+  const btn = document.getElementById('submit-image-btn');
+  if (!btn) return;
+
+  btn.classList.toggle('disabled', stickersState.placed.length === 0);
+}

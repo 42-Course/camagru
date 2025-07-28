@@ -1,5 +1,3 @@
-// /frontend/js/auth.js
-
 const AUTH_KEY = 'camagru_auth_token';
 const USER_KEY = 'camagru_user';
 

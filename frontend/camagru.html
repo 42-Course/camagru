@@ -16,7 +16,8 @@
         <!-- Preview Container -->
         <div id="preview-container" class="position-relative border rounded bg-light mb-3" style="aspect-ratio: 4 / 3; overflow: hidden;">
           <!-- Webcam or image will be rendered here (canvas or video/img) -->
-          <div id="preview-content" class="w-100 h-100 position-relative"></div>
+          <div id="preview-background" class="w-100 h-100 position-absolute top-0 start-0 z-0"></div>
+          <div id="preview-stickers" class="w-100 h-100 position-relative z-1"></div>
         </div>
 
         <!-- Sticker Controls -->
@@ -37,7 +38,15 @@
                 <input type="range" class="form-range" id="rotationRange" min="0" max="360" step="1" value="0">
               </div>
             </div>
-            <div class="form-text">Drag to reposition. You can scale and rotate using the sliders above.</div>
+            <div class="d-flex justify-content-between">
+              <div class="form-text">Drag to reposition. You can scale and rotate using the sliders above.</div>
+
+              <div class="text-end mt-2">
+                <button id="delete-sticker-btn" class="btn btn-sm btn-outline-danger" title="Remove selected sticker">
+                  <i class="bi bi-trash"></i>
+                </button>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -74,14 +83,14 @@
             </div>
           </div>
         </div>
-      </div>
-    </div>
 
-    <!-- Submit Button -->
-    <div class="text-end mt-4">
-      <button id="submit-image-btn" class="btn btn-success">
-        <i class="bi bi-check-circle"></i> Save Composite
-      </button>
+        <!-- Submit Button -->
+        <div class="text-end mt-4">
+          <button id="submit-image-btn" class="btn btn-success disabled">
+            <i class="bi bi-check-circle"></i> Create Image!
+          </button>
+        </div>
+      </div>
     </div>
   </main>
 
@@ -97,6 +106,7 @@
     import { apiFetch } from './js/api.js';
     import { loadStickers } from './js/components/stickerTray.js';
     import { enableStickerDragAndDrop } from './js/editor/dragDrop.js';
+    import { initEditorPreview } from './js/editor/editor.js';
 
     if (!isLoggedIn()) {
       window.location.href = '/login.html';
@@ -104,6 +114,7 @@
 
     initLayout(async () => {
       await loadStickers();
+      await initEditorPreview();
       enableStickerDragAndDrop();
     });
 

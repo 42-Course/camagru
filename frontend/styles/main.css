@@ -177,6 +177,14 @@ body {
   outline-offset: 2px;
 }
 
+#image-history .bi-camera {
+  color: #0d6efd;
+}
+
+#image-history .bi-camera:hover {
+  color: #084298;
+}
+
 @keyframes shimmer {
   0% { background-position: -200% 0; }
   100% { background-position: 200% 0; }

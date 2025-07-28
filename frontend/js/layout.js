@@ -1,5 +1,3 @@
-// /js/layout.js
-
 import { getCurrentUser, logout } from './auth.js';
 
 export function renderNavbar() {

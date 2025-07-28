@@ -1,5 +1,3 @@
-// /js/gallery.js
-
 import { apiFetch } from './api.js';
 import { createImageCard } from './components/imageCard.js';
 

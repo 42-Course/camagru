@@ -1,5 +1,3 @@
-// /js/components/createImageCard.js
-
 import { openImageModal } from './imageModal.js';
 
 export function createImageCard(image, allImages = []) {

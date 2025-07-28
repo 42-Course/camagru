@@ -39,4 +39,18 @@ export function selectSticker(stickerEl) {
     stickerEl.style.transform = `rotate(${rotation}deg) scale(${stickerEl.dataset.scale || 1})`;
     stickerEl.dataset.rotation = rotation;
   };
+  
+
+  const deleteBtn = document.getElementById('delete-sticker-btn');
+  deleteBtn.onclick = () => {
+    const selected = stickersState.getSelected();
+    if (!selected) return;
+
+    selected.remove();
+    stickersState.remove(selected);
+
+    // Clear controls
+    document.getElementById('sticker-controls').classList.add('d-none');
+  };
+
 }

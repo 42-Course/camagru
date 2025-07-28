@@ -2,7 +2,12 @@ require_relative "./base_model"
 
 class Like < BaseModel
   def self.find_by_image(image_id)
-    query("SELECT * FROM #{table_name} WHERE image_id = $1", [image_id]).to_a
+    query(<<~SQL, [image_id]).to_a
+      SELECT likes.*, users.id AS user_id, users.username, users.created_at AS user_created_at
+      FROM likes
+      JOIN users ON likes.user_id = users.id
+      WHERE likes.image_id = $1
+    SQL
   end
 
   def self.create(user_id:, image_id:)

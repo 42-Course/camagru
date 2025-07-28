@@ -12,22 +12,22 @@ class GalleryController < BaseController
     )
     tags "gallery", "images"
     auth_required value: false
-
     param :page, Integer, required: false, desc: "Page number (default: 1)"
     param :per_page, Integer, required: false, desc: "Items per page (default: 10, max: 100)"
     param :sort_by, String, required: false, desc: "Sort field: created_at, likes, or comments"
     param :order, String, required: false, desc: "`asc` or `desc` (default: desc)"
-
     response 200, "Paginated images", example: {
-      page: 1,
-      per_page: 5,
-      total: 32,
-      total_pages: 7,
+      page: 1, per_page: 5, total: 32, total_pages: 7,
       images: [
         {
           id: 3, file_path: "/images/abc.png", user_id: 1, created_at: "...",
           user: {id: 4, username: "alice", created_at: "2025-07-27T12:00:00Z"},
-          comments: [],
+          comments: [
+            {
+              id: 42, image_id: 3, user_id: 7, content: "awesome!",
+              created_at: "", username: "alice", user_created_at: ""
+            }
+          ],
           likes: []
         }
       ]

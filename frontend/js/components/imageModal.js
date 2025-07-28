@@ -27,8 +27,19 @@ function renderImageModal(image) {
   const modal = document.getElementById('image-modal');
   const content = modal.querySelector('.modal-content');
 
+  const username = image.user?.username || 'anonymous';
+  const createdAt = new Date(image.created_at).toLocaleString();
+
   content.innerHTML = `
     <div class="d-flex flex-column align-items-center position-relative p-0">
+
+      <!-- Header with user and time -->
+      <div class="w-100 d-flex justify-content-between align-items-center px-3 py-2 border-bottom">
+        <span class="fw-semibold">@${username}</span>
+        <small class="text-muted">${createdAt}</small>
+      </div>
+
+      <!-- Image -->
       <img src="${image.file_path}" alt="Image" class="img-fluid" />
 
       <!-- Floating arrows with Bootstrap Icons -->
@@ -39,6 +50,7 @@ function renderImageModal(image) {
         <i class="bi bi-chevron-right"></i>
       </button>
 
+      <!-- Comments -->
       <div class="w-100 p-3 border-top comment-section">
         <h5 class="mb-3">Comments</h5>
         <div class="comment-list">
@@ -54,6 +66,7 @@ function renderImageModal(image) {
   content.querySelector('.nav-arrow.left').onclick = showPrev;
   content.querySelector('.nav-arrow.right').onclick = showNext;
 }
+
 
 function showPrev() {
   currentIndex = (currentIndex - 1 + imageList.length) % imageList.length;

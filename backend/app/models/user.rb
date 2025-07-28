@@ -46,4 +46,9 @@ class User < BaseModel
   def self.images_and_archives(user_id)
     Image.find_by_user(user_id, exclude_archived: false)
   end
+
+  def self.liked_image?(user_id, image_id)
+    row = query("SELECT 1 FROM likes WHERE user_id = $1 AND image_id = $2 LIMIT 1", [user_id, image_id]).first
+    !row.nil?
+  end
 end

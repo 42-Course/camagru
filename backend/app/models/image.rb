@@ -1,6 +1,7 @@
 require_relative "./base_model"
 require_relative "./image"
 require_relative "./comment"
+require_relative "./user"
 
 class Image < BaseModel
   DEFAULT_SORT_BY   = "created_at".freeze
@@ -65,7 +66,8 @@ class Image < BaseModel
   def self.with_metadata(image)
     image.merge(
       "comments" => Comment.find_by_image(image["id"]),
-      "likes" => Like.find_by_image(image["id"])
+      "likes" => Like.find_by_image(image["id"]),
+      "user" => User.find_public_by_id(image["user_id"])
     )
   end
 

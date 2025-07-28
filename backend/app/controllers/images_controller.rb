@@ -9,7 +9,19 @@ class ImagesController < BaseController
     auth_required value: true
 
     response 200, "List of active images", example: [
-      {id: 1, file_path: "/images/abc.png", user_id: 4, deleted_at: nil}
+      {
+        id: 1,
+        file_path: "/images/abc.png",
+        user_id: 4,
+        deleted_at: "null",
+        user: {
+          id: 4,
+          username: "alice",
+          created_at: "2025-07-27T12:00:00Z"
+        },
+        comments: [],
+        likes: []
+      }
     ]
   end
 
@@ -25,7 +37,19 @@ class ImagesController < BaseController
     auth_required value: true
 
     response 200, "List of archived images", example: [
-      {id: 2, file_path: "/images/old.png", user_id: 4, deleted_at: "2024-01-01T10:00:00Z"}
+      {
+        id: 2,
+        file_path: "/images/old.png",
+        user_id: 4,
+        deleted_at: "2024-01-01T10:00:00Z",
+        user: {
+          id: 4,
+          username: "alice",
+          created_at: "2025-07-27T12:00:00Z"
+        },
+        comments: [],
+        likes: []
+      }
     ]
   end
 

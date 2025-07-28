@@ -11,6 +11,11 @@ class User < BaseModel
     result.ntuples.positive? ? result[0] : nil
   end
 
+  def self.find_public_by_id(id)
+    result = query("SELECT id, username, created_at FROM #{table_name} WHERE id = $1 LIMIT 1", [id])
+    result.ntuples.positive? ? result[0] : nil
+  end
+
   def self.create(username:, email:, password:)
     password_hash = PasswordHasher.hash_password(password)
     result = query(<<~SQL, [username, email, password_hash])

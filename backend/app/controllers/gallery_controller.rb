@@ -24,7 +24,12 @@ class GalleryController < BaseController
       total: 32,
       total_pages: 7,
       images: [
-        {id: 3, file_path: "/images/abc.png", user_id: 1, created_at: "..."}
+        {
+          id: 3, file_path: "/images/abc.png", user_id: 1, created_at: "...",
+          user: {id: 4, username: "alice", created_at: "2025-07-27T12:00:00Z"},
+          comments: [],
+          likes: []
+        }
       ]
     }
   end

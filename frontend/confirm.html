@@ -17,7 +17,10 @@
   <script type="module">
     import { initLayout } from './js/layout.js';
     import { apiFetch } from './js/api.js';
+    import { redirectIfLoggedIn } from './js/auth.js';
 
+    redirectIfLoggedIn('/profile.html');
+    
     initLayout(async () => {
       const status = document.getElementById('status');
 

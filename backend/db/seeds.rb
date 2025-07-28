@@ -20,7 +20,8 @@ LIKES_PER_IMAGE = 3
 users = []
 stickers = []
 images = []
-
+likes_count = 0
+comments_count = 0
 # ---------------------------
 # Stickers
 # ---------------------------
@@ -72,6 +73,7 @@ images.each do |image|
     commenter = users.sample
     content = Faker::Hipster.sentence(word_count: 4)
     Comment.create(user_id: commenter["id"], image_id: image["id"], content: content)
+    comments_count += 1
     puts "💬 #{commenter['username']} → image##{image['id']}: #{content}"
   end
 end
@@ -84,6 +86,7 @@ images.each do |image|
   likers = users.sample(rand(1..LIKES_PER_IMAGE))
   likers.each do |liker|
     Like.create(user_id: liker["id"], image_id: image["id"])
+    likes_count += 1
     puts "❤️ #{liker['username']} liked image##{image['id']}"
   end
 end
@@ -91,6 +94,6 @@ end
 puts "\n✅ Done seeding Camagru!"
 puts "👤 Users:     #{users.size}"
 puts "🖼️ Images:    #{images.size}"
-puts "💬 Comments:  Approx #{images.size * COMMENTS_PER_IMAGE}"
-puts "❤️ Likes:     Approx #{images.size * LIKES_PER_IMAGE}"
+puts "💬 Comments:  #{comments_count}"
+puts "❤️ Likes:     #{likes_count}"
 puts "✨ Stickers:  #{stickers.size}"

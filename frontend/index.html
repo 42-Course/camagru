@@ -18,35 +18,88 @@
 
   <script type="module">
     import { initLayout } from './js/layout.js';
-    import { loadNextGalleryPage } from './js/gallery.js';
-
-    const main = document.getElementById('app-container');
-    const grid = document.createElement('div');
-
+    import { resetGalleryState, loadNextGalleryPage } from './js/gallery.js';
+    
     initLayout(async () => {
+      async function reloadGallery() {
+        resetGalleryState();
+        grid.innerHTML = '';
+        await loadNextGalleryPage(grid, {
+          sortBy: currentSortBy,
+          order: currentOrder
+        });
+      }
+
+      const main = document.getElementById('app-container');
+      const grid = document.createElement('div');
+      let currentSortBy = 'created_at';
+      let currentOrder = 'desc';
+
       grid.className = 'row g-3';
       main.appendChild(grid);
+
+      const controls = document.createElement('div');
+      controls.className = 'd-flex justify-content-between align-items-center mb-3 flex-wrap gap-2';
+
+      // Sort dropdown
+      const sortSelect = document.createElement('select');
+      sortSelect.className = 'form-select w-auto';
+      sortSelect.innerHTML = `
+        <option value="created_at">Newest</option>
+        <option value="likes">Most Liked</option>
+        <option value="comments">Most Commented</option>
+      `;
+      sortSelect.value = currentSortBy;
+
+      // Order toggle
+      const orderToggle = document.createElement('button');
+      orderToggle.className = 'btn btn-outline-secondary';
+      orderToggle.dataset.order = currentOrder;
+      orderToggle.textContent = currentOrder === 'desc' ? 'Descending' : 'Ascending';
+
+      orderToggle.onclick = () => {
+        currentOrder = orderToggle.dataset.order = orderToggle.dataset.order === 'desc' ? 'asc' : 'desc';
+        orderToggle.textContent = currentOrder === 'desc' ? 'Descending' : 'Ascending';
+        reloadGallery();
+      };
+
+      sortSelect.onchange = () => {
+        currentSortBy = sortSelect.value;
+        reloadGallery();
+      };
+
+      controls.append(sortSelect, orderToggle);
+      main.insertBefore(controls, grid);
+
+      const more = document.createElement('div');
+      more.className = 'text-center mt-4';
+
+      const button = document.createElement('button');
+      button.className = 'btn btn-outline-primary';
+      button.textContent = 'Load More';
+
+      more.appendChild(button);
+      main.appendChild(more)
+
+      await loadNextGalleryPage(grid);
+
+      button.onclick = () => loadNextGalleryPage(grid, {
+        sortBy: currentSortBy,
+        order: currentOrder
+      });
+
+      // infinite scroll hook
+      window.addEventListener('scroll', () => {
+        if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 300) {
+          loadNextGalleryPage(grid, {
+            sortBy: currentSortBy,
+            order: currentOrder
+          });
+        }
+      });
+
     });
 
-    const more = document.createElement('div');
-    more.className = 'text-center mt-4';
-
-    const button = document.createElement('button');
-    button.className = 'btn btn-outline-primary';
-    button.textContent = 'Load More';
-    button.onclick = () => loadNextGalleryPage(grid, { fromButton: true });
-
-    more.appendChild(button);
-    main.appendChild(more)
-
-    await loadNextGalleryPage(grid);
-
-    // infinite scroll hook
-    window.addEventListener('scroll', () => {
-      if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 300) {
-        loadNextGalleryPage(grid);
-      }
-    });
   </script>
 </body>
 

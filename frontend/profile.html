@@ -11,16 +11,14 @@
   <div id="app-navbar"></div>
   <main id="app-container" class="container py-4"></main>
   <div id="app-footer"></div>
-
-  <!-- Shared image modal -->
   <div id="image-modal" class="position-fixed top-0 start-0 w-100 h-100 d-flex justify-content-center align-items-center bg-dark bg-opacity-75 d-none" style="z-index: 1050;">
     <div class="modal-content bg-white rounded shadow" style="max-width: 600px; width: 90%; max-height: 90vh; overflow-y: auto;"></div>
   </div>
-
   <div id="loading-cover"></div>
 
   <script type="module">
     import { initLayout } from './js/layout.js';
+    import { getRandomArbitrary } from './js/utils.js';
     import { getCurrentUser, logout, isLoggedIn } from './js/auth.js';
     import { apiFetch } from './js/api.js';
     import { createImageCard } from './js/components/imageCard.js';
@@ -69,9 +67,29 @@
 
       let currentView = 'published';
 
+      function createSkeletonCard() {
+        const wrapper = document.createElement('div');
+        wrapper.className = 'image-card skeleton-card';
+
+        const skeleton = document.createElement('div');
+        skeleton.className = 'skeleton w-100 h-100';
+        wrapper.appendChild(skeleton);
+
+        return wrapper;
+      }
+
       async function loadImages() {
         imageContainer.innerHTML = '';
         status.textContent = '';
+
+        const skeletons = [];
+
+        for (let i = 0; i < getRandomArbitrary(1, 6); i++) {
+          const skeleton = createSkeletonCard();
+          skeleton.classList.add('temp-skeleton');
+          skeletons.push(skeleton);
+          imageContainer.appendChild(skeleton);
+        }
 
         const endpoint = currentView === 'archived' ? '/images/archived' : '/images/mine';
 
@@ -89,8 +107,18 @@
             const el = createImageCard(image, images);
             imageContainer.appendChild(el);
           }
+
+          removeTempSkeletons();
+
         } catch (err) {
+          removeTempSkeletons();
           status.textContent = err.message;
+        }
+
+        function removeTempSkeletons() {
+          for (const skel of skeletons) {
+            imageContainer.removeChild(skel);
+          }
         }
       }
 

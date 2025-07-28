@@ -31,9 +31,13 @@ function renderImageModal(image) {
     <div class="d-flex flex-column align-items-center position-relative p-0">
       <img src="${image.file_path}" alt="Image" class="img-fluid" />
 
-      <!-- Floating arrows -->
-      <button class="nav-arrow left" aria-label="Previous">←</button>
-      <button class="nav-arrow right" aria-label="Next">→</button>
+      <!-- Floating arrows with Bootstrap Icons -->
+      <button class="nav-arrow left" aria-label="Previous">
+        <i class="bi bi-chevron-left"></i>
+      </button>
+      <button class="nav-arrow right" aria-label="Next">
+        <i class="bi bi-chevron-right"></i>
+      </button>
 
       <div class="w-100 p-3 border-top comment-section">
         <h5 class="mb-3">Comments</h5>

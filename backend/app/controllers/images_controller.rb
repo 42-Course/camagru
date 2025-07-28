@@ -1,6 +1,7 @@
 require_relative "./base_controller"
 require_relative "../models/image"
 require_relative "../models/user"
+require_relative "../lib/image_processor"
 
 class ImagesController < BaseController
   api_doc "/images/mine", method: :get do
@@ -113,5 +114,91 @@ class ImagesController < BaseController
 
     Image.delete(image["id"])
     json_response({message: "Image deleted successfully"})
+  end
+
+  # rubocop:disable Metrics/BlockLength
+  api_doc "/images", method: :post do
+    description(
+      "Upload a new image with sticker overlays. " \
+      "Accepts base64, file upload, remote URL, or local path. " \
+      "Composites stickers server-side and returns enriched image metadata."
+    )
+    tags "images", "stickers"
+    auth_required value: true
+
+    param :image, String, required: true,
+                          desc: "Base image to be used (can be data URL, remote URL, local path, or uploaded file)"
+    param :stickers, Array, required: true, desc: "Array of sticker overlays with position and scale" do
+      param :sticker_id, Integer, required: true, desc: "Sticker ID to overlay"
+      param :x, Integer, required: true, desc: "X position of the sticker"
+      param :y, Integer, required: true, desc: "Y position of the sticker"
+      param :scale, Float, required: false, desc: "Optional scale factor (default: 1.0)"
+    end
+
+    response 201, "Image created", example: {
+      id: 42,
+      user_id: 4,
+      file_path: "/uploads/user_04/2025/07/28/image_a1b2c3d4.png",
+      created_at: "2025-07-28T15:42:00Z",
+      deleted_at: nil,
+      user: {
+        id: 4,
+        username: "alice",
+        created_at: "2025-07-27T12:00:00Z"
+      },
+      comments: [],
+      likes: []
+    }
+
+    response 400, "Invalid or missing input", example: {
+      error: "Invalid image data"
+    }
+
+    response 401, "Unauthorized", example: {
+      error: "Unauthorized"
+    }
+
+    response 500, "Server-side failure", example: {
+      error: "Failed to save image"
+    }
+  end
+  # rubocop:enable Metrics/BlockLength
+
+  post "/images" do
+    halt 401, json_error("Unauthorized") unless current_user
+
+    # 1. Validate + extract input
+    payload = parse_json_body
+    raw_image = params["image"] || payload["image"]
+    stickers = payload["stickers"]
+
+    halt 400, json_error("Invalid image data") unless raw_image
+    halt 400, json_error("Invalid sticker data") unless stickers.is_a?(Array)
+    halt 400, json_error("At least one sticker must be used") unless stickers.any?
+
+    # 2. Decode base64 or uploaded image
+    base_image = ImageProcessor.load_image(raw_image)
+    halt 400, json_error("Unsupported image format") unless base_image
+
+    # 3. Fetch sticker file paths from DB
+    sticker_ids = stickers.map { _1["sticker_id"] }.uniq
+    sticker_map = Sticker.find_by_ids(sticker_ids).index_by { _1["id"] }
+
+    # 4. Apply stickers
+    composer = ImageProcessor.new(base_image)
+    stickers.each do |s|
+      sticker = sticker_map[s["sticker_id"]]
+      halt 400, json_error("Invalid sticker: #{s['sticker_id']}") unless sticker
+      composer.add_sticker(sticker["file_path"], s["x"], s["y"], s["scale"] || 1.0)
+    end
+
+    # 5. Save to file path (include user ID and date)
+    saved_path = composer.save(user_id: current_user["id"])
+
+    # 6. Save to DB
+    image_record = Image.create(user_id: current_user["id"], file_path: saved_path)
+    halt 500, json_error("Failed to save image") unless image_record
+
+    json_response(Image.with_metadata(image_record))
   end
 end

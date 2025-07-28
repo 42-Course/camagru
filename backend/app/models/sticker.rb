@@ -10,4 +10,12 @@ class Sticker < BaseModel
 
     result.ntuples.positive? ? result[0] : nil
   end
+
+  def self.find_by_ids(ids)
+    return [] if ids.empty?
+
+    placeholders = ids.each_index.map {|i| "$#{i + 1}" }.join(", ")
+    result = query("SELECT * FROM #{table_name} WHERE id IN (#{placeholders})", ids)
+    result.to_a
+  end
 end

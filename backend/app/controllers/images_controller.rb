@@ -128,7 +128,7 @@ class ImagesController < BaseController
 
     param :image, String, required: true,
                           desc: "Base image to be used (can be data URL, remote URL, local path, or uploaded file)"
-    param :stickers, Array, required: true, desc: "Array of sticker overlays with position and scale" do
+    param :stickers, Array, required: true, desc: "Array of sticker overlays with position and scale (layered first-to-last)" do
       param :sticker_id, Integer, required: true, desc: "Sticker ID to overlay"
       param :x, Integer, required: true, desc: "X position of the sticker"
       param :y, Integer, required: true, desc: "Y position of the sticker"

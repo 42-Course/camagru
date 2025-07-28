@@ -94,14 +94,19 @@
   <script type="module">
     import { initLayout } from './js/layout.js';
     import { isLoggedIn } from './js/auth.js';
+    import { apiFetch } from './js/api.js';
+    import { loadStickers } from './js/components/stickerTray.js';
+    import { enableStickerDragAndDrop } from './js/editor/dragDrop.js';
 
     if (!isLoggedIn()) {
       window.location.href = '/login.html';
     }
 
     initLayout(async () => {
-      // TODO
+      await loadStickers();
+      enableStickerDragAndDrop();
     });
+
   </script>
 </body>
 </html>

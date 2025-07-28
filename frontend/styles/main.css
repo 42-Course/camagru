@@ -154,6 +154,29 @@ body {
   background: #f8f9fa;
 }
 
+.sticker-thumb:hover {
+  opacity: 0.8;
+  transform: scale(1.1);
+  transition: all 0.2s;
+}
+
+.placed-sticker {
+  pointer-events: auto;
+  user-select: none;
+  transform-origin: center center;
+  position: absolute;
+}
+
+.placed-sticker:active {
+  cursor: grabbing;
+  opacity: 0.8;
+}
+
+.selected-sticker {
+  outline: 2px dashed #0d6efd;
+  outline-offset: 2px;
+}
+
 @keyframes shimmer {
   0% { background-position: -200% 0; }
   100% { background-position: 200% 0; }

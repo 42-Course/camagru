@@ -7,7 +7,7 @@ export function saveAuth(token, user) {
 }
 
 export function updateUsername(user) {
-  localStorage.setItem(USER_KEY, JSON.stringify(user));
+  localStorage.setItem(USER_KEY, JSON.stringify({identity: user}));
 }
 
 export function getToken() {

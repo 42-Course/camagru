@@ -43,6 +43,44 @@ class EmailSender
     send_email(to: email, subject: "Reset your Camagru password", html: html)
   end
 
+  def self.send_comment_notification_email(to:, image_url:, image_title:, commenter_username:, comment_content:)
+    html = comment_notification_template(
+      image_url: image_url,
+      image_title: image_title,
+      commenter_username: commenter_username,
+      comment_content: comment_content
+    )
+
+    send_email(
+      to: to,
+      subject: "New comment on your Camagru image",
+      html: html
+    )
+  end
+
+  # protected agains injections with escape_html
+  def self.comment_notification_template(image_url:, image_title:, commenter_username:, comment_content:)
+    <<~HTML
+      <html>
+        <body style="font-family: sans-serif;">
+          <h2>Someone commented on your image!</h2>
+          <p><strong>#{commenter_username}</strong> wrote:</p>
+          <blockquote style="margin: 1em 0; padding: 1em; background: #f9f9f9; border-left: 4px solid #ccc;">
+            #{Rack::Utils.escape_html(comment_content)}
+          </blockquote>
+          <p><strong>Your image:</strong></p>
+          <img src="#{image_url}" alt="#{image_title}" style="max-width: 450px; border-radius: 6px; margin-bottom: 1em;" />
+          <p>
+            <a href="#{DOMAIN}/profile.html" style="background: #3b82f6; color: white; padding: 10px 16px; border-radius: 5px; text-decoration: none;">
+              View it on Camagru
+            </a>
+          </p>
+          <p style="font-size: 12px; color: #999;">You received this because you're the owner of the image.</p>
+        </body>
+      </html>
+    HTML
+  end
+
   def self.confirmation_template(token)
     <<~HTML
       <html>

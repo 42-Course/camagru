@@ -38,8 +38,21 @@ class CommentsController < BaseController
 
     comment = Comment.create(user_id: current_user["id"], image_id: image["id"], content: content)
 
-    # Email notification logic (can be deferred)
-    # notify_image_owner(image, comment)
+    owner = User.find_by_id(image["user_id"])
+    notifications_enabled = owner["notifications_enabled"] == "t"
+    if owner && owner["email"] != current_user["email"] && notifications_enabled
+      image_url = image["file_path"]
+      commenter_username = current_user["username"]
+      comment_content = comment["content"]
+
+      EmailSender.send_comment_notification_email(
+        to: owner["email"],
+        image_url: image_url,
+        image_title: "Image ##{image['id']}",
+        commenter_username: commenter_username,
+        comment_content: comment_content
+      )
+    end
 
     json_response(comment, status: 201)
   end

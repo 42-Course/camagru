@@ -149,5 +149,3 @@ make logs       # Tail backend logs
 ---
 
 Camagru is proudly built with ❤️ and Sinatra by pulgamecanica
-
-- [ ] Send notifications via email

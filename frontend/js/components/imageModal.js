@@ -96,7 +96,7 @@ function renderImageModal(image) {
                     <span>${c.content}</span>
                   </div>
                 `).join('')
-              : '<div class="text-muted">No comments yet.</div>'
+              : '<hr><div class="text-muted mt-1 p-1">No comments yet.</div>'
           }
         </div>
       </div>
@@ -214,9 +214,88 @@ function renderImageModal(image) {
         }
       };
     }
-  }
 
+
+    // === Insert Share Button ===
+    const shareContainer = document.createElement('div');
+    if (shareContainer) {
+      shareContainer.className = 'w-100 px-3 py-2 border-top d-flex justify-content-end';
+
+      const shareBtn = document.createElement('button');
+      shareBtn.className = 'btn btn-outline-secondary btn-sm d-flex align-items-center gap-1';
+      shareBtn.id = 'share-btn';
+      shareBtn.innerHTML = `<i class="bi bi-share-fill"></i> Share`;
+
+      shareBtn.onclick = async () => {
+        console.log("HERE")
+        openSharePreviewModal(image.file_path);
+
+        try {
+          const response = await fetch(image.file_path);
+          const blob = await response.blob();
+
+          const file = new File([blob], `image-${image.id}.jpg`, { type: blob.type });
+
+          if (navigator.canShare && navigator.canShare({ files: [file] })) {
+            await navigator.share({
+              files: [file],
+              title: `@${image.user?.username || 'anonymous'} on Camagru`,
+              text: 'Check out this image!',
+            });
+          } else {
+            // Fallback
+            openSharePreviewModal(image.file_path);
+          }
+        } catch (err) {
+          console.warn('[Share Error]', err);
+          openSharePreviewModal(image.file_path);
+        }
+      };
+      shareContainer.appendChild(shareBtn);
+      content.querySelector('.d-flex.flex-column').appendChild(shareContainer);
+    }
+  }
 }
+
+function openSharePreviewModal(imageUrl) {
+  const modal = document.getElementById('share-preview-modal');
+  const previewImg = modal.querySelector('img');
+  const directLink = modal.querySelector('#direct-link');
+  const emailBtn = modal.querySelector('#email-share-btn');
+  const copyBtn = modal.querySelector('#copy-link-btn');
+  const facebookBtn = modal.querySelector('#facebook-share-btn');
+
+  // Share to facebook
+  facebookBtn.href = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(imageUrl)}`;
+
+  // Link to Picture
+  previewImg.src = imageUrl;
+  directLink.href = imageUrl;
+
+  // Email: use subject + body
+  const subject = encodeURIComponent('Check out this image!');
+  const body = encodeURIComponent(`Hi,\n\nI wanted to share this image with you:\n${imageUrl}`);
+  emailBtn.href = `mailto:?subject=${subject}&body=${body}`;
+
+  // Copy to clipboard
+  copyBtn.onclick = () => {
+    navigator.clipboard?.writeText(imageUrl)
+      .then(() => {
+        copyBtn.innerHTML = `<i class="bi bi-clipboard-check-fill"></i> Copied!`;
+        setTimeout(() => {
+          copyBtn.innerHTML = `<i class="bi bi-clipboard"></i> Copy Link`;
+        }, 2000);
+      })
+      .catch(() => alert('Failed to copy the link.'));
+  };
+
+  modal.classList.remove('d-none');
+  modal.classList.add('d-block');
+  modal.onclick = (e) => {
+    if (e.target === modal) modal.classList.add('d-none');
+  };
+}
+
 
 function showPrev() {
   currentIndex = (currentIndex - 1 + imageList.length) % imageList.length;

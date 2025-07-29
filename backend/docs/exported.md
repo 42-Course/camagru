@@ -210,29 +210,6 @@
 ```
 
 ---
-## `GET` /stickers
-**Description**: Get the list of available sticker overlays. Public route used by the editor.
-**Auth required**: No
-**Tags**: stickers
-
-### Responses
-- `200`: List of stickers
-```json
-[
-  {
-    "id": 1,
-    "name": "Hat",
-    "file_path": "/stickers/hat.png"
-  },
-  {
-    "id": 2,
-    "name": "Laser Eyes",
-    "file_path": "/stickers/lasereyes.png"
-  }
-]
-```
-
----
 ## `POST` /images/:id/like
 **Description**: Like a specific image. Only authenticated users may like images.
 **Auth required**: Yes
@@ -444,7 +421,9 @@
 
 ### Parameters
 - `image` (String) **(required)** - Base image to be used (can be data URL, remote URL, local path, or uploaded file)
-- `stickers` (Array) **(required)** - Array of sticker overlays with position and scale
+- `preview_width` (Integer) **(required)** - Preview width relative to the x, y and scale
+- `preview_height` (Integer) **(required)** - Preview height relative to the x, y and scale
+- `stickers` (Array) **(required)** - Array of sticker overlays with position and scale (layered first-to-last)
 
 ### Responses
 - `201`: Image created
@@ -481,6 +460,29 @@
 {
   "error": "Failed to save image"
 }
+```
+
+---
+## `GET` /stickers
+**Description**: Get the list of available sticker overlays. Public route used by the editor.
+**Auth required**: No
+**Tags**: stickers
+
+### Responses
+- `200`: List of stickers
+```json
+[
+  {
+    "id": 1,
+    "name": "Hat",
+    "file_path": "/stickers/hat.png"
+  },
+  {
+    "id": 2,
+    "name": "Laser Eyes",
+    "file_path": "/stickers/lasereyes.png"
+  }
+]
 ```
 
 ---

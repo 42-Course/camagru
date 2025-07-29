@@ -308,34 +308,6 @@
     ]
   },
   {
-    "method": "GET",
-    "path": "/stickers",
-    "description": "Get the list of available sticker overlays. Public route used by the editor.",
-    "auth_required": false,
-    "tags": [
-      "stickers"
-    ],
-    "params": [],
-    "responses": [
-      {
-        "code": 200,
-        "desc": "List of stickers",
-        "example": [
-          {
-            "id": 1,
-            "name": "Hat",
-            "file_path": "/stickers/hat.png"
-          },
-          {
-            "id": 2,
-            "name": "Laser Eyes",
-            "file_path": "/stickers/lasereyes.png"
-          }
-        ]
-      }
-    ]
-  },
-  {
     "method": "POST",
     "path": "/images/:id/like",
     "description": "Like a specific image. Only authenticated users may like images.",
@@ -621,10 +593,22 @@
         "desc": "Base image to be used (can be data URL, remote URL, local path, or uploaded file)"
       },
       {
+        "name": "preview_width",
+        "type": "Integer",
+        "required": true,
+        "desc": "Preview width relative to the x, y and scale"
+      },
+      {
+        "name": "preview_height",
+        "type": "Integer",
+        "required": true,
+        "desc": "Preview height relative to the x, y and scale"
+      },
+      {
         "name": "stickers",
         "type": "Array",
         "required": true,
-        "desc": "Array of sticker overlays with position and scale"
+        "desc": "Array of sticker overlays with position and scale (layered first-to-last)"
       }
     ],
     "responses": [
@@ -666,6 +650,34 @@
         "example": {
           "error": "Failed to save image"
         }
+      }
+    ]
+  },
+  {
+    "method": "GET",
+    "path": "/stickers",
+    "description": "Get the list of available sticker overlays. Public route used by the editor.",
+    "auth_required": false,
+    "tags": [
+      "stickers"
+    ],
+    "params": [],
+    "responses": [
+      {
+        "code": 200,
+        "desc": "List of stickers",
+        "example": [
+          {
+            "id": 1,
+            "name": "Hat",
+            "file_path": "/stickers/hat.png"
+          },
+          {
+            "id": 2,
+            "name": "Laser Eyes",
+            "file_path": "/stickers/lasereyes.png"
+          }
+        ]
       }
     ]
   }

@@ -128,7 +128,10 @@ class ImagesController < BaseController
 
     param :image, String, required: true,
                           desc: "Base image to be used (can be data URL, remote URL, local path, or uploaded file)"
-    param :stickers, Array, required: true, desc: "Array of sticker overlays with position and scale (layered first-to-last)" do
+    param :preview_width, Integer, required: true, desc: "Preview width relative to the x, y and scale"
+    param :preview_height, Integer, required: true, desc: "Preview height relative to the x, y and scale"
+    param :stickers, Array, required: true,
+                            desc: "Array of sticker overlays with position and scale (layered first-to-last)" do
       param :sticker_id, Integer, required: true, desc: "Sticker ID to overlay"
       param :x, Integer, required: true, desc: "X position of the sticker"
       param :y, Integer, required: true, desc: "Y position of the sticker"
@@ -162,7 +165,6 @@ class ImagesController < BaseController
       error: "Failed to save image"
     }
   end
-  # rubocop:enable Metrics/BlockLength
 
   post "/images" do
     halt 401, json_error("Unauthorized") unless current_user
@@ -170,6 +172,8 @@ class ImagesController < BaseController
     # 1. Validate + extract input
     payload = parse_json_body
     raw_image = params["image"] || payload["image"]
+    preview_width = payload["preview_width"].to_i || 854
+    preview_height = payload["preview_height"].to_i || 540
     stickers = payload["stickers"]
 
     halt 400, json_error("Invalid image data") unless raw_image
@@ -185,11 +189,19 @@ class ImagesController < BaseController
     sticker_map = Sticker.find_by_ids(sticker_ids).index_by { _1["id"] }
 
     # 4. Apply stickers
-    composer = ImageProcessor.new(base_image)
+    composer = ImageProcessor.new(base_image, preview_width, preview_height)
     stickers.each do |s|
       sticker = sticker_map[s["sticker_id"]]
       halt 400, json_error("Invalid sticker: #{s['sticker_id']}") unless sticker
-      composer.add_sticker(sticker["file_path"], s["x"], s["y"], s["scale"] || 1.0)
+      composer.add_sticker(
+        sticker["file_path"],
+        {
+          x: s["x"],
+          y: s["y"],
+          scale: s["scale"] || 1.0,
+          rotation: s["rotation"] || 0.0
+        }
+      )
     end
 
     # 5. Save to file path (include user ID and date)
@@ -201,4 +213,5 @@ class ImagesController < BaseController
 
     json_response(Image.with_metadata(image_record))
   end
+  # rubocop:enable Metrics/BlockLength
 end

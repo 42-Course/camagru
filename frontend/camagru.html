@@ -95,9 +95,14 @@
   </main>
 
   <div id="app-footer"></div>
-  <div id="image-modal" class="position-fixed top-0 start-0 w-100 h-100 d-flex justify-content-center align-items-center bg-dark bg-opacity-75 d-none" style="z-index: 1050;">
-    <div class="modal-content bg-white rounded shadow" style="max-width: 600px; width: 90%; max-height: 90vh; overflow-y: auto;"></div>
+  <div id="image-modal" class="modal-overlay d-none">
+    <div class="modal-content bg-white rounded shadow p-4 text-center" style="max-width: 600px; width: 90%; max-height: 90vh; overflow-y: auto;">
+      <div id="image-modal-body">
+        <!-- Will be updated via JS -->
+      </div>
+    </div>
   </div>
+
   <div id="loading-cover"></div>
 
   <script type="module">
@@ -107,7 +112,7 @@
     import { loadStickers } from './js/components/stickerTray.js';
     import { enableStickerDragAndDrop } from './js/editor/dragDrop.js';
     import { initEditorPreview } from './js/editor/editor.js';
-
+    import { setupImageSubmission } from './js/editor/submitImage.js';
     if (!isLoggedIn()) {
       window.location.href = '/login.html';
     }
@@ -116,6 +121,7 @@
       await loadStickers();
       await initEditorPreview();
       enableStickerDragAndDrop();
+      setupImageSubmission();
     });
 
   </script>

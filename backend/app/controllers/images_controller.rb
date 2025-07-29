@@ -170,7 +170,7 @@ class ImagesController < BaseController
     halt 401, json_error("Unauthorized") unless current_user
 
     # 1. Validate + extract input
-    payload = parse_json_body
+    payload = json_body
     raw_image = params["image"] || payload["image"]
     preview_width = payload["preview_width"].to_i || 854
     preview_height = payload["preview_height"].to_i || 540
@@ -186,7 +186,10 @@ class ImagesController < BaseController
 
     # 3. Fetch sticker file paths from DB
     sticker_ids = stickers.map { _1["sticker_id"] }.uniq
-    sticker_map = Sticker.find_by_ids(sticker_ids).index_by { _1["id"] }
+    sticker_map = {}
+    Sticker.find_by_ids(sticker_ids.reverse).each do |sticker|
+      sticker_map[sticker["id"].to_i] = sticker
+    end
 
     # 4. Apply stickers
     composer = ImageProcessor.new(base_image, preview_width, preview_height)

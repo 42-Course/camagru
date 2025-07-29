@@ -30,8 +30,6 @@ export function enableStickerDragAndDrop() {
     sticker.className = 'placed-sticker position-absolute';
     sticker.style.left = `${x}px`;
     sticker.style.top = `${y}px`;
-    sticker.style.width = '60px';
-    sticker.style.height = '60px';
     sticker.style.transform = 'rotate(0deg)';
     sticker.style.cursor = 'pointer';
 

@@ -7,6 +7,12 @@ export function setupImageSubmission() {
   btn.addEventListener('click', async () => {
     if (btn.classList.contains('disabled')) return;
 
+    const container = document.getElementById('preview-stickers');
+    if (!container) return;
+
+    const preview_width = container.offsetWidth;
+  const preview_height = container.offsetHeight;
+    
     // Lock UI
     btn.classList.add('disabled');
     showImageModal('Saving your image...');
@@ -14,13 +20,13 @@ export function setupImageSubmission() {
     const image = getCurrentBaseImage();
     const stickers = stickersState.getAllMetadata();
 
+    
     try {
       const res = await apiFetch('/images', {
         method: 'POST',
-        body: JSON.stringify({ image, stickers })
+        body: JSON.stringify({ image, preview_width, preview_height, stickers })
       });
 
-      console.log(stickers)
       const data = await res.json();
 
       if (!res.ok) {

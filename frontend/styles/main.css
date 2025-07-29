@@ -18,11 +18,17 @@
 #app-footer {
   width: 100%;
 }
+#app-footer footer {
+  background-color: white;
+}
 
 body {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
+  background-image: url("https://static.vecteezy.com/system/resources/thumbnails/000/358/468/small/White_Background-01.jpg");
+  background-position: center;
+  background-repeat: repeat;
 }
 
 #app-container {

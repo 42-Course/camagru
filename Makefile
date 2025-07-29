@@ -1,7 +1,7 @@
 DOCKER_CONTAINER_NAME = backend
 DOCKER_EXEC = /usr/bin/docker
 
-up:
+up: serve
 	${DOCKER_EXEC} compose up -d
 	
 build:
@@ -68,6 +68,17 @@ re_db: drop create migrate
 lint:
 	-@rubocop -a
 
+serve:
+	@echo "Starting server at http://localhost:8000"
+	@python3 -m http.server --directory frontend > /dev/null 2>&1 & echo $$! > .serve_pid
+
+stop_serve:
+	@if [ -f .serve_pid ]; then \
+		kill -9 `cat .serve_pid` && rm .serve_pid && echo "Server stopped."; \
+	else \
+		echo "No server running."; \
+	fi
+
 help:
 	@echo
 	@echo "🚀 Camagru Makefile Commands"
@@ -95,4 +106,4 @@ help:
 	@echo " re            ♻️  Full reset (down, build, re_db, lint)"
 	@echo
 
-.PHONY: docs test migrate
+.PHONY: docs test migrate serve stop_serve

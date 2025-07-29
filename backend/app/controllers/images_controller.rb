@@ -186,15 +186,16 @@ class ImagesController < BaseController
 
     # 3. Fetch sticker file paths from DB
     sticker_ids = stickers.map { _1["sticker_id"] }.uniq
-    sticker_map = {}
-    Sticker.find_by_ids(sticker_ids.reverse).each do |sticker|
-      sticker_map[sticker["id"].to_i] = sticker
+    sticker_lookup = {}
+    Sticker.find_by_ids(sticker_ids).each do |sticker|
+      sticker_lookup[sticker["id"].to_i] = sticker
     end
 
     # 4. Apply stickers
     composer = ImageProcessor.new(base_image, preview_width, preview_height)
-    stickers.each do |s|
-      sticker = sticker_map[s["sticker_id"]]
+    stickers.reverse.each do |s|
+      sticker = sticker_lookup[s["sticker_id"]]
+
       halt 400, json_error("Invalid sticker: #{s['sticker_id']}") unless sticker
       composer.add_sticker(
         sticker["file_path"],

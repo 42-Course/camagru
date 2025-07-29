@@ -35,6 +35,7 @@ export function enableStickerDragAndDrop() {
 
     // Custom data
     sticker.dataset.stickerId = stickerId;
+    sticker.dataset.src = e.dataTransfer.getData('sticker-src');
     sticker.dataset.x = x;
     sticker.dataset.y = y;
     sticker.dataset.scale = 1;

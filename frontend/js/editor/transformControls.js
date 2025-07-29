@@ -53,4 +53,32 @@ export function selectSticker(stickerEl) {
     document.getElementById('sticker-controls').classList.add('d-none');
   };
 
+  updateStickerDebugInfo(stickerEl);
+}
+
+
+export function updateStickerDebugInfo(sticker) {
+  const infoBox = document.getElementById('selected-sticker-info');
+  if (!infoBox) return;
+
+  const scale = parseFloat(sticker.dataset.scale || 1);
+  const rotation = parseFloat(sticker.dataset.rotation || 0);
+  const x = parseInt(sticker.dataset.x || 0, 10);
+  const y = parseInt(sticker.dataset.y || 0, 10);
+  const width = sticker.offsetWidth;
+  const height = sticker.offsetHeight;
+
+  const naturalWidth = sticker.naturalWidth;
+  const naturalHeight = sticker.naturalHeight;
+
+  infoBox.innerHTML = `
+    <strong>Sticker Debug Info</strong><br>
+    ID: ${sticker.dataset.stickerId}<br>
+    Src: ${sticker.dataset.src}<br>
+    Position: (${x}, ${y})<br>
+    Scale: ${scale.toFixed(2)}<br>
+    Rotation: ${rotation.toFixed(1)}°<br>
+    Original Size: ${naturalWidth}x${naturalHeight}<br>
+    Display Size: ${width}x${height}
+  `;
 }

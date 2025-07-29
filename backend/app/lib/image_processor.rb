@@ -6,7 +6,7 @@ require "net/http"
 require "uri"
 require "base64"
 
-# rubocop:disable Naming/MethodParameterName, Metrics/AbcSize
+# rubocop:disable Naming/MethodParameterName, Metrics/AbcSize, Metrics/MethodLength
 class ImageProcessor
   def self.load_image(source)
     load_image_from_path(source)
@@ -27,10 +27,20 @@ class ImageProcessor
     scale = options[:scale].to_f
     rotation = options[:rotation].to_f
 
+    puts "\n=== [Sticker Debug Info] ==="
+    puts "Sticker path: #{sticker_path}"
+    puts "Original input position: (#{x}, #{y})"
+    puts "Options: #{options.inspect}"
+    puts "Original sticker size: #{sticker.width}x#{sticker.height}"
+
     x, y = normalize_position(x, y)
     scale = normalize_scale(scale)
     resize_sticker!(sticker, scale)
     rotate_sticker!(sticker, rotation)
+
+    puts "Scaled position on image: (#{x.round(2)}, #{y.round(2)})"
+    puts "Computed scale: #{scale.round(3)}"
+    puts "Rotation: #{rotation} degrees"
 
     final_x = x.to_i
     final_y = y.to_i
@@ -170,4 +180,4 @@ class ImageProcessor
     end
   end
 end
-# rubocop:enable Naming/MethodParameterName, Metrics/AbcSize
+# rubocop:enable Naming/MethodParameterName, Metrics/AbcSize, Metrics/MethodLength

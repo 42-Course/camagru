@@ -5,6 +5,10 @@ export const stickersState = {
   selected: null,
 
   add(stickerEl) {
+    const maxLayer = Math.max(0, ...this.placed.map(el => parseInt(el.dataset.layer || 0)));
+    stickerEl.dataset.layer = maxLayer + 1;
+    stickerEl.style.zIndex = stickerEl.dataset.layer;
+
     this.placed.push(stickerEl);
     this.selected = stickerEl;
     updateSaveButtonState();
@@ -21,17 +25,24 @@ export const stickersState = {
   },
 
   setSelected(el) {
+    const maxLayer = Math.max(0, ...this.placed.map(el => parseInt(el.dataset.layer || 0)));
+    el.dataset.layer = maxLayer + 1;
+    el.style.zIndex = el.dataset.layer;
+
     this.selected = el;
   },
 
   getAllMetadata() {
-    return this.placed.map(el => ({
-      sticker_id: parseInt(el.dataset.stickerId),
-      x: parseFloat(el.dataset.x),
-      y: parseFloat(el.dataset.y),
-      scale: parseFloat(el.dataset.scale),
-      rotation: parseFloat(el.dataset.rotation),
-    }));
+    return [...this.placed]
+      .sort((a, b) => parseInt(b.dataset.layer || 0) - parseInt(a.dataset.layer || 0))
+      .map(el => ({
+        sticker_id: parseInt(el.dataset.stickerId),
+        x: parseFloat(el.dataset.x),
+        y: parseFloat(el.dataset.y),
+        scale: parseFloat(el.dataset.scale),
+        rotation: parseFloat(el.dataset.rotation),
+        layer: parseInt(el.dataset.layer || 0)
+      }));
   }
 };
 

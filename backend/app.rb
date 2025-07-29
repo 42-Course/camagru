@@ -40,6 +40,16 @@ class CamagruApp < Sinatra::Base
     send_file full_path
   end
 
+  get "/public/stickers/*" do
+    file_path = params["splat"].first
+    full_path = File.expand_path("public/stickers/#{file_path}")
+
+    halt 403 unless full_path.start_with?(File.expand_path("public/stickers/"))
+    halt 404 unless File.exist?(full_path)
+
+    send_file full_path
+  end
+
   use SessionsController
   use UsersController
   use PasswordResetsController

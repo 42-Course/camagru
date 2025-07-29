@@ -161,8 +161,12 @@ class ImagesController < BaseController
       error: "Unauthorized"
     }
 
+    response 422, "Image processing failed.", example: {
+      error: "Image processing failed."
+    }
+
     response 500, "Server-side failure", example: {
-      error: "Failed to save image"
+      error: "An unexpected error occurred."
     }
   end
 
@@ -216,6 +220,10 @@ class ImagesController < BaseController
     halt 500, json_error("Failed to save image") unless image_record
 
     json_response(Image.with_metadata(image_record))
+  rescue MiniMagick::Error
+    halt 422, json_error("Image processing failed.")
+  rescue e
+    halt 500, json_error("An unexpected error occurred.")
   end
   # rubocop:enable Metrics/BlockLength
 end

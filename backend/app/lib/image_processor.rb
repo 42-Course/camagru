@@ -16,6 +16,10 @@ class ImageProcessor
     @image = base_image
     @preview_width = preview_width
     @preview_height = preview_height
+    @uses_gif_stickers = false
+
+    format = base_image["%m"].strip.downcase
+    @frames = format == "gif" ? base_image.frames : [base_image]
   end
 
   def add_sticker(sticker_path, options={})
@@ -45,9 +49,26 @@ class ImageProcessor
     final_x = x.to_i
     final_y = y.to_i
 
-    @image = @image.composite(sticker) do |c|
-      c.compose "Over"
-      c.geometry "+#{final_x}+#{final_y}"
+    format = sticker["%m"].strip.downcase
+    is_gif = format == "gif" && sticker.frames.count > 1
+    if is_gif
+      @uses_gif_stickers = true
+      base_frame = @frames.first || @image
+      @frames = Array.new(sticker.frames.count) { base_frame.dup }
+
+      sticker.frames.each_with_index do |frame, i|
+        @frames[i] = @frames[i].composite(frame) do |c|
+          c.compose "Over"
+          c.geometry "+#{final_x}+#{final_y}"
+        end
+      end
+    else
+      @frames.map!.with_index do |frame, _i|
+        frame.composite(sticker) do |c|
+          c.compose "Over"
+          c.geometry "+#{final_x}+#{final_y}"
+        end
+      end
     end
   end
 
@@ -56,14 +77,22 @@ class ImageProcessor
     dir = File.join("public/uploads", "user_%02d" % user_id, *today.strftime("%Y/%m/%d").split("/"))
     FileUtils.mkdir_p(dir)
 
-    filename = "image_#{SecureRandom.hex(4)}.png"
+    extension = @uses_gif_stickers ? "gif" : "png"
+    filename = "image_#{SecureRandom.hex(4)}.#{extension}"
     path = File.join(dir, filename)
-    rel_path = path.sub("public/", "") # Keep just the part after public/
+    rel_path = path.sub("public/", "")
 
-    @image.format("png")
-    @image.write(path)
+    if @uses_gif_stickers
+      MiniMagick.convert do |convert|
+        @frames.each {|f| convert << f.path }
+        convert.loop(0)
+        convert << path
+      end
+    else
+      @frames.first.format("png")
+      @frames.first.write(path)
+    end
 
-    # Generate absolute URL
     base_url = ENV["BASE_URL"] || "http://localhost:9292"
     File.join(base_url, "public", rel_path)
   end
@@ -113,12 +142,12 @@ class ImageProcessor
 
   def self.load_remote_image(url)
     uri = URI.parse(url)
-
+    ext = File.extname(uri.path)
     Net::HTTP.start(uri.host, uri.port, use_ssl: uri.scheme == "https") do |http|
       resp = http.get(uri.request_uri)
       raise "Failed to fetch image" unless resp.is_a?(Net::HTTPSuccess)
 
-      Tempfile.open(["remote", ".png"]) do |f|
+      Tempfile.open(["remote", ext]) do |f|
         f.binmode
         f.write(resp.body)
         f.flush
@@ -139,22 +168,19 @@ class ImageProcessor
   def normalize_position(x, y)
     preview_w = @preview_width.to_f
     preview_h = @preview_height.to_f
-    image_w   = @image.width.to_f
-    image_h   = @image.height.to_f
+    image_w = @image.width.to_f
+    image_h = @image.height.to_f
 
     raise "Missing preview dimensions" if preview_w <= 0 || preview_h <= 0
 
-    [
-      x.to_f * (image_w / preview_w),
-      y.to_f * (image_h / preview_h)
-    ]
+    [x * (image_w / preview_w), y * (image_h / preview_h)]
   end
 
   def normalize_scale(scale)
     preview_w = @preview_width.to_f
     preview_h = @preview_height.to_f
-    image_w   = @image.width.to_f
-    image_h   = @image.height.to_f
+    image_w = @image.width.to_f
+    image_h = @image.height.to_f
 
     raise "Missing preview dimensions for scale" if preview_w <= 0 || preview_h <= 0
 

@@ -19,7 +19,6 @@ COMMENTS_PER_IMAGE = 2
 LIKES_PER_IMAGE = 3
 
 users = []
-stickers = []
 images = []
 likes_count = 0
 comments_count = 0
@@ -28,9 +27,18 @@ gen_fake_images = false
 # Stickers
 # ---------------------------
 puts "✨ Creating stickers..."
-%w[sunglasses flower hat moustache sparkle crown].each do |name|
-  path = Faker::Avatar.image(slug: "sticker-#{name}", size: "200x200", format: "png", set: "set#{rand(1..MAX_SET)}")
-  stickers << Sticker.create(name: name, file_path: path)
+
+base_url = ENV["BASE_URL"] || "http://localhost:9292"
+sticker_dir = File.join("public", "stickers")
+stickers = []
+
+Dir.glob("#{sticker_dir}/*.{png,gif,jpg,jpeg}").each do |path|
+  filename = File.basename(path)
+  name = File.basename(filename, ".*").tr("_", " ").capitalize
+
+  url = File.join(base_url, "public", "stickers", filename)
+
+  stickers << Sticker.create(name: name, file_path: url)
   puts "➕ Sticker: #{name}"
 end
 

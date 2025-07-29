@@ -51,4 +51,32 @@ class User < BaseModel
     row = query("SELECT 1 FROM likes WHERE user_id = $1 AND image_id = $2 LIMIT 1", [user_id, image_id]).first
     !row.nil?
   end
+
+  # rubocop:disable Metrics/AbcSize
+  def self.update_profile!(user_id, updates={})
+    allowed = %w[username email notifications_enabled]
+    set_clauses = []
+    values = []
+
+    updates.each_with_index do |(key, value), idx|
+      next unless allowed.include?(key.to_s)
+
+      set_clauses << "#{key} = $#{idx + 1}"
+      values << value
+    end
+
+    return false if set_clauses.empty?
+
+    values << user_id
+    sql = <<~SQL
+      UPDATE #{table_name}
+      SET #{set_clauses.join(', ')}, updated_at = NOW()
+      WHERE id = $#{values.size}
+      RETURNING *
+    SQL
+
+    result = query(sql, values)
+    result.ntuples.positive? ? result[0] : nil
+  end
+  # rubocop:enable Metrics/AbcSize
 end

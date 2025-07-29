@@ -6,6 +6,10 @@ export function saveAuth(token, user) {
   localStorage.setItem(USER_KEY, JSON.stringify(user));
 }
 
+export function updateUsername(user) {
+  localStorage.setItem(USER_KEY, JSON.stringify(user));
+}
+
 export function getToken() {
   return localStorage.getItem(AUTH_KEY);
 }

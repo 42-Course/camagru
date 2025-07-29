@@ -2,65 +2,6 @@
 
 > **Note:** All authenticated endpoints require a valid token via `Authorization: Bearer <token>`.
 
-## `POST` /password/forgot
-**Description**: Request a password reset link.If the email exists, a reset token is sent.The response is always generic to prevent user enumeration.
-**Auth required**: No
-**Tags**: password, reset
-
-### Parameters
-- `email` (String) **(required)** - The email address of the user requesting a password reset.
-
-### Responses
-- `200`: Reset link sent (if account exists)
-```json
-{
-  "message": "If your email exists, a reset link has been sent"
-}
-```
-- `400`: Missing email
-```json
-{
-  "error": "Missing email"
-}
-```
-
----
-## `POST` /password/reset
-**Description**: Request a password reset link. If the email exists, a reset token is sent.The response is always generic to prevent user enumeration.
-**Auth required**: No
-**Tags**: password, reset
-
-### Parameters
-- `token` (String) **(required)** - Reset token received by email
-- `password` (String) **(required)** - New password (minimum 8 characters)
-
-### Responses
-- `200`: Password reset successfully
-```json
-{
-  "message": "Password reset successfully"
-}
-```
-- `400`: Missing token or password
-```json
-{
-  "error": "Missing token or password"
-}
-```
-- `400`: Password too short
-```json
-{
-  "error": "Password too short (min 8 chars)"
-}
-```
-- `400`: Invalid or expired token
-```json
-{
-  "error": "Invalid or expired token"
-}
-```
-
----
 ## `POST` /signup
 **Description**: Register a new user. Sends a confirmation email with a validation token.
 **Auth required**: No
@@ -129,6 +70,75 @@
 ```json
 {
   "error": "Invalid or expired token"
+}
+```
+
+---
+## `GET` /me
+**Description**: Get the current authenticated user information.
+**Auth required**: Yes
+**Tags**: user, email
+
+### Responses
+- `200`: User
+```json
+{
+  "id": 42,
+  "username": "newhandle",
+  "email": "new@example.com",
+  "created_at": "2025-07-28T14:22:01Z",
+  "updated_at": "2025-07-28T14:22:01Z",
+  "confirmed_at": "2025-07-28T14:22:01Z",
+  "notifications_enabled": "true"
+}
+```
+- `401`: Unauthorized
+```json
+{
+  "error": "Unauthorized"
+}
+```
+- `404`: Invalid user
+```json
+{
+  "error": "Invalid user"
+}
+```
+
+---
+## `POST` /me/update
+**Description**: Update the current user's profile. Supports changing username, email, and/or password.
+**Auth required**: Yes
+**Tags**: users, profile
+
+### Parameters
+- `username` (String)  - New unique username
+- `email` (String)  - New valid email address
+- `notifications_enabled` (Boolean)  - Activate or deactivate notifications
+- `password` (String)  - New password (minimum 8 characters)
+
+### Responses
+- `200`: Profile updated
+```json
+{
+  "id": 3,
+  "username": "newhandle",
+  "email": "new@example.com",
+  "created_at": "2025-07-28T14:22:01Z",
+  "updated_at": "2025-07-29T10:11:45Z",
+  "notifications_enabled": "false"
+}
+```
+- `400`: Validation failed
+```json
+{
+  "error": "Password too short (min 8 chars)"
+}
+```
+- `400`: Failed to update profile
+```json
+{
+  "error": "Failed to update profile"
 }
 ```
 
@@ -206,6 +216,88 @@
 ```json
 {
   "error": "Image not found"
+}
+```
+
+---
+## `GET` /stickers
+**Description**: Get the list of available sticker overlays. Public route used by the editor.
+**Auth required**: No
+**Tags**: stickers
+
+### Responses
+- `200`: List of stickers
+```json
+[
+  {
+    "id": 1,
+    "name": "Hat",
+    "file_path": "/stickers/hat.png"
+  },
+  {
+    "id": 2,
+    "name": "Laser Eyes",
+    "file_path": "/stickers/lasereyes.png"
+  }
+]
+```
+
+---
+## `POST` /password/forgot
+**Description**: Request a password reset link.If the email exists, a reset token is sent.The response is always generic to prevent user enumeration.
+**Auth required**: No
+**Tags**: password, reset
+
+### Parameters
+- `email` (String) **(required)** - The email address of the user requesting a password reset.
+
+### Responses
+- `200`: Reset link sent (if account exists)
+```json
+{
+  "message": "If your email exists, a reset link has been sent"
+}
+```
+- `400`: Missing email
+```json
+{
+  "error": "Missing email"
+}
+```
+
+---
+## `POST` /password/reset
+**Description**: Request a password reset link. If the email exists, a reset token is sent.The response is always generic to prevent user enumeration.
+**Auth required**: No
+**Tags**: password, reset
+
+### Parameters
+- `token` (String) **(required)** - Reset token received by email
+- `password` (String) **(required)** - New password (minimum 8 characters)
+
+### Responses
+- `200`: Password reset successfully
+```json
+{
+  "message": "Password reset successfully"
+}
+```
+- `400`: Missing token or password
+```json
+{
+  "error": "Missing token or password"
+}
+```
+- `400`: Password too short
+```json
+{
+  "error": "Password too short (min 8 chars)"
+}
+```
+- `400`: Invalid or expired token
+```json
+{
+  "error": "Invalid or expired token"
 }
 ```
 
@@ -460,29 +552,6 @@
 {
   "error": "Failed to save image"
 }
-```
-
----
-## `GET` /stickers
-**Description**: Get the list of available sticker overlays. Public route used by the editor.
-**Auth required**: No
-**Tags**: stickers
-
-### Responses
-- `200`: List of stickers
-```json
-[
-  {
-    "id": 1,
-    "name": "Hat",
-    "file_path": "/stickers/hat.png"
-  },
-  {
-    "id": 2,
-    "name": "Laser Eyes",
-    "file_path": "/stickers/lasereyes.png"
-  }
-]
 ```
 
 ---

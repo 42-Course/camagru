@@ -1,94 +1,6 @@
 [
   {
     "method": "POST",
-    "path": "/password/forgot",
-    "description": "Request a password reset link.If the email exists, a reset token is sent.The response is always generic to prevent user enumeration.",
-    "auth_required": false,
-    "tags": [
-      "password",
-      "reset"
-    ],
-    "params": [
-      {
-        "name": "email",
-        "type": "String",
-        "required": true,
-        "desc": "The email address of the user requesting a password reset."
-      }
-    ],
-    "responses": [
-      {
-        "code": 200,
-        "desc": "Reset link sent (if account exists)",
-        "example": {
-          "message": "If your email exists, a reset link has been sent"
-        }
-      },
-      {
-        "code": 400,
-        "desc": "Missing email",
-        "example": {
-          "error": "Missing email"
-        }
-      }
-    ]
-  },
-  {
-    "method": "POST",
-    "path": "/password/reset",
-    "description": "Request a password reset link. If the email exists, a reset token is sent.The response is always generic to prevent user enumeration.",
-    "auth_required": false,
-    "tags": [
-      "password",
-      "reset"
-    ],
-    "params": [
-      {
-        "name": "token",
-        "type": "String",
-        "required": true,
-        "desc": "Reset token received by email"
-      },
-      {
-        "name": "password",
-        "type": "String",
-        "required": true,
-        "desc": "New password (minimum 8 characters)"
-      }
-    ],
-    "responses": [
-      {
-        "code": 200,
-        "desc": "Password reset successfully",
-        "example": {
-          "message": "Password reset successfully"
-        }
-      },
-      {
-        "code": 400,
-        "desc": "Missing token or password",
-        "example": {
-          "error": "Missing token or password"
-        }
-      },
-      {
-        "code": 400,
-        "desc": "Password too short",
-        "example": {
-          "error": "Password too short (min 8 chars)"
-        }
-      },
-      {
-        "code": 400,
-        "desc": "Invalid or expired token",
-        "example": {
-          "error": "Invalid or expired token"
-        }
-      }
-    ]
-  },
-  {
-    "method": "POST",
     "path": "/signup",
     "description": "Register a new user. Sends a confirmation email with a validation token.",
     "auth_required": false,
@@ -191,6 +103,110 @@
         "desc": "Invalid or missing token",
         "example": {
           "error": "Invalid or expired token"
+        }
+      }
+    ]
+  },
+  {
+    "method": "GET",
+    "path": "/me",
+    "description": "Get the current authenticated user information.",
+    "auth_required": true,
+    "tags": [
+      "user",
+      "email"
+    ],
+    "params": [],
+    "responses": [
+      {
+        "code": 200,
+        "desc": "User",
+        "example": {
+          "id": 42,
+          "username": "newhandle",
+          "email": "new@example.com",
+          "created_at": "2025-07-28T14:22:01Z",
+          "updated_at": "2025-07-28T14:22:01Z",
+          "confirmed_at": "2025-07-28T14:22:01Z",
+          "notifications_enabled": "true"
+        }
+      },
+      {
+        "code": 401,
+        "desc": "Unauthorized",
+        "example": {
+          "error": "Unauthorized"
+        }
+      },
+      {
+        "code": 404,
+        "desc": "Invalid user",
+        "example": {
+          "error": "Invalid user"
+        }
+      }
+    ]
+  },
+  {
+    "method": "POST",
+    "path": "/me/update",
+    "description": "Update the current user's profile. Supports changing username, email, and/or password.",
+    "auth_required": true,
+    "tags": [
+      "users",
+      "profile"
+    ],
+    "params": [
+      {
+        "name": "username",
+        "type": "String",
+        "required": false,
+        "desc": "New unique username"
+      },
+      {
+        "name": "email",
+        "type": "String",
+        "required": false,
+        "desc": "New valid email address"
+      },
+      {
+        "name": "notifications_enabled",
+        "type": "Boolean",
+        "required": false,
+        "desc": "Activate or deactivate notifications"
+      },
+      {
+        "name": "password",
+        "type": "String",
+        "required": false,
+        "desc": "New password (minimum 8 characters)"
+      }
+    ],
+    "responses": [
+      {
+        "code": 200,
+        "desc": "Profile updated",
+        "example": {
+          "id": 3,
+          "username": "newhandle",
+          "email": "new@example.com",
+          "created_at": "2025-07-28T14:22:01Z",
+          "updated_at": "2025-07-29T10:11:45Z",
+          "notifications_enabled": "false"
+        }
+      },
+      {
+        "code": 400,
+        "desc": "Validation failed",
+        "example": {
+          "error": "Password too short (min 8 chars)"
+        }
+      },
+      {
+        "code": 400,
+        "desc": "Failed to update profile",
+        "example": {
+          "error": "Failed to update profile"
         }
       }
     ]
@@ -303,6 +319,122 @@
         "desc": "Image not found",
         "example": {
           "error": "Image not found"
+        }
+      }
+    ]
+  },
+  {
+    "method": "GET",
+    "path": "/stickers",
+    "description": "Get the list of available sticker overlays. Public route used by the editor.",
+    "auth_required": false,
+    "tags": [
+      "stickers"
+    ],
+    "params": [],
+    "responses": [
+      {
+        "code": 200,
+        "desc": "List of stickers",
+        "example": [
+          {
+            "id": 1,
+            "name": "Hat",
+            "file_path": "/stickers/hat.png"
+          },
+          {
+            "id": 2,
+            "name": "Laser Eyes",
+            "file_path": "/stickers/lasereyes.png"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "method": "POST",
+    "path": "/password/forgot",
+    "description": "Request a password reset link.If the email exists, a reset token is sent.The response is always generic to prevent user enumeration.",
+    "auth_required": false,
+    "tags": [
+      "password",
+      "reset"
+    ],
+    "params": [
+      {
+        "name": "email",
+        "type": "String",
+        "required": true,
+        "desc": "The email address of the user requesting a password reset."
+      }
+    ],
+    "responses": [
+      {
+        "code": 200,
+        "desc": "Reset link sent (if account exists)",
+        "example": {
+          "message": "If your email exists, a reset link has been sent"
+        }
+      },
+      {
+        "code": 400,
+        "desc": "Missing email",
+        "example": {
+          "error": "Missing email"
+        }
+      }
+    ]
+  },
+  {
+    "method": "POST",
+    "path": "/password/reset",
+    "description": "Request a password reset link. If the email exists, a reset token is sent.The response is always generic to prevent user enumeration.",
+    "auth_required": false,
+    "tags": [
+      "password",
+      "reset"
+    ],
+    "params": [
+      {
+        "name": "token",
+        "type": "String",
+        "required": true,
+        "desc": "Reset token received by email"
+      },
+      {
+        "name": "password",
+        "type": "String",
+        "required": true,
+        "desc": "New password (minimum 8 characters)"
+      }
+    ],
+    "responses": [
+      {
+        "code": 200,
+        "desc": "Password reset successfully",
+        "example": {
+          "message": "Password reset successfully"
+        }
+      },
+      {
+        "code": 400,
+        "desc": "Missing token or password",
+        "example": {
+          "error": "Missing token or password"
+        }
+      },
+      {
+        "code": 400,
+        "desc": "Password too short",
+        "example": {
+          "error": "Password too short (min 8 chars)"
+        }
+      },
+      {
+        "code": 400,
+        "desc": "Invalid or expired token",
+        "example": {
+          "error": "Invalid or expired token"
         }
       }
     ]
@@ -650,34 +782,6 @@
         "example": {
           "error": "Failed to save image"
         }
-      }
-    ]
-  },
-  {
-    "method": "GET",
-    "path": "/stickers",
-    "description": "Get the list of available sticker overlays. Public route used by the editor.",
-    "auth_required": false,
-    "tags": [
-      "stickers"
-    ],
-    "params": [],
-    "responses": [
-      {
-        "code": 200,
-        "desc": "List of stickers",
-        "example": [
-          {
-            "id": 1,
-            "name": "Hat",
-            "file_path": "/stickers/hat.png"
-          },
-          {
-            "id": 2,
-            "name": "Laser Eyes",
-            "file_path": "/stickers/lasereyes.png"
-          }
-        ]
       }
     ]
   }

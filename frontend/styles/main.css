@@ -108,6 +108,10 @@ body {
   overflow-y: auto;
 }
 
+.image-card {
+  display: flex;
+}
+
 .skeleton {
   background: linear-gradient(110deg, #e0e0e0 8%, #f0f0f0 18%, #e0e0e0 33%);
   background-size: 200% 100%;

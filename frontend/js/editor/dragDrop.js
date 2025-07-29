@@ -40,6 +40,8 @@ export function enableStickerDragAndDrop() {
     sticker.dataset.y = y;
     sticker.dataset.scale = 1;
     sticker.dataset.rotation = 0;
+    sticker.dataset.originalWidth = sticker.naturalWidth;
+    sticker.dataset.originalHeight = sticker.naturalHeight;
 
     // Append and track it
     content.appendChild(sticker);

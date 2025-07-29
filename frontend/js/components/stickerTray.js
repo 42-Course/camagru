@@ -31,7 +31,6 @@ function renderStickerTray(stickers) {
     img.style.cursor = 'grab';
     img.draggable = true;
 
-    // You can attach dataset info for drag logic
     img.dataset.stickerId = sticker.id;
 
     list.appendChild(img);

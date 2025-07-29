@@ -14,6 +14,7 @@ puts "🌱 Seeding Camagru database..."
 
 TOTAL_USERS = 10
 MAX_IMAGES_PER_USER = 3
+MAX_SET = 6
 COMMENTS_PER_IMAGE = 2
 LIKES_PER_IMAGE = 3
 
@@ -22,12 +23,13 @@ stickers = []
 images = []
 likes_count = 0
 comments_count = 0
+gen_fake_images = false
 # ---------------------------
 # Stickers
 # ---------------------------
 puts "✨ Creating stickers..."
 %w[sunglasses flower hat moustache sparkle crown].each do |name|
-  path = Faker::Avatar.image(slug: "sticker-#{name}", size: "200x200", format: "png", set: "set1")
+  path = Faker::Avatar.image(slug: "sticker-#{name}", size: "200x200", format: "png", set: "set#{rand(1..MAX_SET)}")
   stickers << Sticker.create(name: name, file_path: path)
   puts "➕ Sticker: #{name}"
 end
@@ -51,49 +53,51 @@ TOTAL_USERS.times do
   puts "✅ User created: #{username}"
 end
 
-# ---------------------------
-# Images
-# ---------------------------
-puts "🖼️ Creating images for users..."
-users.each do |user|
-  rand(1..MAX_IMAGES_PER_USER).times do
-    path = "https://picsum.photos/seed/#{SecureRandom.hex(4)}/640/480"
-    image = Image.create(user_id: user["id"], file_path: path)
-    images << image
-    puts "📷 #{user['username']} uploaded #{path}"
+if gen_fake_images
+  # ---------------------------
+  # Images
+  # ---------------------------
+  puts "🖼️ Creating images for users..."
+  users.each do |user|
+    rand(1..MAX_IMAGES_PER_USER).times do
+      path = "https://picsum.photos/seed/#{SecureRandom.hex(4)}/640/480"
+      image = Image.create(user_id: user["id"], file_path: path)
+      images << image
+      puts "📷 #{user['username']} uploaded #{path}"
+    end
   end
-end
 
-# ---------------------------
-# Comments
-# ---------------------------
-puts "💬 Adding comments..."
-images.each do |image|
-  rand(1..COMMENTS_PER_IMAGE).times do
-    commenter = users.sample
-    content = Faker::Hipster.sentence(word_count: 4)
-    Comment.create(user_id: commenter["id"], image_id: image["id"], content: content)
-    comments_count += 1
-    puts "💬 #{commenter['username']} → image##{image['id']}: #{content}"
+  # ---------------------------
+  # Comments
+  # ---------------------------
+  puts "💬 Adding comments..."
+  images.each do |image|
+    rand(1..COMMENTS_PER_IMAGE).times do
+      commenter = users.sample
+      content = Faker::Hipster.sentence(word_count: 4)
+      Comment.create(user_id: commenter["id"], image_id: image["id"], content: content)
+      comments_count += 1
+      puts "💬 #{commenter['username']} → image##{image['id']}: #{content}"
+    end
   end
-end
 
-# ---------------------------
-# Likes
-# ---------------------------
-puts "❤️ Adding likes..."
-images.each do |image|
-  likers = users.sample(rand(1..LIKES_PER_IMAGE))
-  likers.each do |liker|
-    Like.create(user_id: liker["id"], image_id: image["id"])
-    likes_count += 1
-    puts "❤️ #{liker['username']} liked image##{image['id']}"
+  # ---------------------------
+  # Likes
+  # ---------------------------
+  puts "❤️ Adding likes..."
+  images.each do |image|
+    likers = users.sample(rand(1..LIKES_PER_IMAGE))
+    likers.each do |liker|
+      Like.create(user_id: liker["id"], image_id: image["id"])
+      likes_count += 1
+      puts "❤️ #{liker['username']} liked image##{image['id']}"
+    end
   end
 end
 
 puts "\n✅ Done seeding Camagru!"
-puts "👤 Users:     #{users.size}"
-puts "🖼️ Images:    #{images.size}"
-puts "💬 Comments:  #{comments_count}"
-puts "❤️ Likes:     #{likes_count}"
-puts "✨ Stickers:  #{stickers.size}"
+puts "👤 Users:     #{users.size}" unless users.empty?
+puts "🖼️ Images:    #{images.size}" unless images.empty?
+puts "💬 Comments:  #{comments_count}" unless comments_count.zero?
+puts "❤️ Likes:     #{likes_count}" unless likes_count.zero?
+puts "✨ Stickers:  #{stickers.size}" unless stickers.empty?

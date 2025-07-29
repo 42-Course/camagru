@@ -141,15 +141,11 @@ make logs       # Tail backend logs
 
 ## 🏁 Remaining Work
 
-* [ ] Implement server-side image processing pipeline (stickers overlay)
-* [ ] Add frontend integration
+* [x] Implement server-side image processing pipeline (stickers overlay)
+* [x] Add frontend integration
 * [ ] Rate limiting for likes/comments/images
 * [ ] User profile editing
 
 ---
 
 Camagru is proudly built with ❤️ and Sinatra by pulgamecanica
-
-
-- [ ] fix position after sticker scale
-

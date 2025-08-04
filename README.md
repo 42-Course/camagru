@@ -4,6 +4,19 @@ Camagru is a containerized full-stack web application inspired by the 42 school 
 
 ---
 
+## Demos:
+
+<details><summary>Web</summary>
+
+https://github.com/user-attachments/assets/00bffa21-4003-45ae-a773-cc5467a1bf76
+</details>
+
+<details><summary>API</summary>
+
+https://github.com/user-attachments/assets/47a110a0-7d08-4a94-80b0-b607da8cd7c7
+</details>
+
+
 ## 🧱 Tech Stack
 
 * **Backend**: Ruby, Sinatra
